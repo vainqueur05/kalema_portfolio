@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.titre }} | Bridge Afrika{% endblock %}
+{% block meta_description %}{{ article.contenu[:150] }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Styles du livre */
+    .book-container {
+        perspective: 1500px;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .book {
+        display: flex;
+        background: #141414;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
+    }
+    .book-spine {
+        width: 40px;
+        background: linear-gradient(90deg, #0a0a0a, #1a1a1a, #0a0a0a);
+        border-right: 1px solid rgba(255,255,255,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        font-size: 0.7rem;
+        color: #E50914;
+        letter-spacing: 3px;
+        font-weight: bold;
+        padding: 10px 0;
+    }
+    .book-content {
+        flex: 1;
+        padding: 40px;
+        background: linear-gradient(135deg, #1a1a1a 0%, #141414 50%, #1a1a1a 100%);
+        position: relative;
+    }
+    .book-content::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: rgba(255,255,255,0.03);
+    }
+    .book-page-number {
+        text-align: center;
+        font-size: 0.7rem;
+        color: #555;
+        margin-top: 30px;
+        font-style: italic;
+    }
+    .date-emotion {
+        font-style: italic;
+        color: #E50914;
+        font-size: 0.85rem;
+    }
+    .reading-reward { display: none; }
+    .reading-reward.visible { display: block; animation: fadeIn 0.5s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Pages du livre */
+    @media (min-width: 768px) {
+        .book-content {
+            column-count: 2;
+            column-gap: 40px;
+            column-rule: 1px solid rgba(255,255,255,0.05);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="min-h-screen bg-netflix-dark pt-24 pb-16 px-4">
+    <div class="book-container">
+        <!-- Fil d'Ariane -->
+        <nav class="text-sm text-netflix-muted mb-6">
+            <a href="/" class="hover:text-netflix-accent transition">Accueil</a> /
+            <a href="/blog" class="hover:text-netflix-accent transition">Blog</a> /
+            <span class="text-white">{{ article.titre }}</span>
+        </nav>
+
+        <!-- Le livre -->
+        <div class="book">
+            <!-- Dos du livre -->
+            <div class="book-spine">
+                {{ article.titre[:30] }}
+            </div>
+
+            <!-- Pages du livre -->
+            <div class="book-content" id="article-content">
+                <p class="date-emotion mb-6">
+                    <i class="fas fa-feather-alt mr-2"></i> Publié un matin de pluie à Kinshasa
+                </p>
+
+                <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-8 leading-tight">
+                    {{ article.titre }}
+                </h1>
+
+                {% if article.image_url %}
+                <div class="w-full h-48 md:h-64 rounded-xl overflow-hidden mb-8 border border-white/5">
+                    <img src="{{ article.image_url }}" alt="{{ article.titre }}" class="w-full h-full object-cover">
+                </div>
+                {% endif %}
+
+                <div class="text-netflix-muted leading-relaxed text-[15px] space-y-4">
+                    {{ article.contenu | safe }}
+                </div>
+
+                <div class="book-page-number">
+                    — Page 1 —
+                </div>
+            </div>
+        </div>
+
+        <!-- Récompense de lecture -->
+        <div class="reading-reward mt-8 text-center" id="reading-reward">
+            <i class="fas fa-bookmark text-4xl text-netflix-accent"></i>
+            <p class="text-white mt-2">Félicitations ! Vous avez terminé ce chapitre. Un high-five virtuel !</p>
+        </div>
+
+        <!-- Compteur de temps -->
+        <div class="text-center mt-8 text-netflix-muted text-sm">
+            <i class="fas fa-clock mr-2"></i> Vous lisez depuis <span id="reading-timer">0</span> secondes.
+        </div>
+
+        <!-- Quiz silencieux -->
+        <div class="bg-netflix-card rounded-2xl p-8 mt-12 text-center max-w-2xl mx-auto">
+            <h3 class="text-xl font-bold text-white mb-4"><i class="fas fa-question-circle mr-2 text-netflix-accent"></i>Quiz silencieux</h3>
+            <p class="text-netflix-muted mb-6">Qu'avez-vous retenu de votre lecture ?</p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <button class="quiz-btn bg-netflix-secondary px-6 py-3 rounded-full text-white hover:bg-netflix-accent transition" data-answer="correct">
+                    <i class="fas fa-lightbulb mr-2"></i>J'ai appris quelque chose
+                </button>
+                <button class="quiz-btn bg-netflix-secondary px-6 py-3 rounded-full text-white hover:bg-netflix-accent transition" data-answer="more">
+                    <i class="fas fa-book-open mr-2"></i>Je veux en savoir plus
+                </button>
+            </div>
+            <p id="quiz-response" class="mt-6 text-netflix-accent italic text-lg"></p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-12 max-w-2xl mx-auto">
+            <a href="/blog" class="border border-netflix-accent text-netflix-accent px-6 py-3 rounded-full hover:bg-netflix-accent hover:text-white transition flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Retour au blog
+            </a>
+            <a href="/contact" class="bg-netflix-accent text-white px-6 py-3 rounded-full hover:bg-red-700 transition flex items-center gap-2">
+                <i class="fas fa-comments"></i> Discutons-en
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Récompense de lecture (scroll 100%)
+    const reward = document.getElementById('reading-reward');
+    if (reward) {
+        window.addEventListener('scroll', () => {
+            const scrollPercent = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight * 100;
+            if (scrollPercent >= 95) {
+                reward.classList.add('visible');
+            }
+        });
+    }
+
+    // Compteur de temps
+    let seconds = 0;
+    const timerEl = document.getElementById('reading-timer');
+    if (timerEl) {
+        setInterval(() => { seconds++; timerEl.textContent = seconds; }, 1000);
+    }
+
+    // Quiz silencieux
+    document.querySelectorAll('.quiz-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const response = document.getElementById('quiz-response');
+            if (response) {
+                if (btn.dataset.answer === 'correct') {
+                    response.textContent = '✨ Merci ! Votre curiosité est votre plus grand atout.';
+                } else {
+                    response.textContent = '📚 Explorez mes autres articles ou contactez-moi pour une discussion personnalisée.';
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

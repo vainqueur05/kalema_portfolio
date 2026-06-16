@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}{{ projet.titre }} | Bridge Afrika{% endblock %}
+{% block meta_description %}{{ projet.description_courte }}{% endblock %}
+{% block og_title %}{{ projet.titre }} – Bridge Afrika{% endblock %}
+{% block og_description %}{{ projet.description_courte }}{% endblock %}
+
+{% block content %}
+<section class="min-h-screen bg-netflix-dark pt-24 pb-16 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Fil d'Ariane -->
+        <nav class="text-sm text-netflix-muted mb-8">
+            <a href="/" class="hover:text-netflix-accent transition">Accueil</a>
+            <span class="mx-2">/</span>
+            <span class="text-white">{{ projet.titre }}</span>
+        </nav>
+
+        <!-- Image de couverture -->
+        {% if projet.image_url %}
+        <div class="w-full h-64 md:h-96 rounded-2xl overflow-hidden mb-8">
+            <img src="{{ projet.image_url }}" alt="{{ projet.titre }}" class="w-full h-full object-cover">
+        </div>
+        {% endif %}
+
+        <!-- Titre et métadonnées -->
+        <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-4">{{ projet.titre }}</h1>
+        <p class="text-xl text-netflix-accent font-semibold mb-6">{{ projet.description_courte }}</p>
+
+        <!-- Description longue -->
+        <div class="prose prose-invert max-w-none mb-8">
+            <p class="text-lg text-netflix-muted leading-relaxed whitespace-pre-wrap">{{ projet.description_longue }}</p>
+        </div>
+
+        <!-- Histoire (si présente) -->
+        {% if projet.histoire %}
+        <div class="bg-netflix-card rounded-2xl p-6 mb-8 border border-white/5">
+            <h2 class="text-2xl font-bold text-white mb-4">📖 L'histoire derrière ce projet</h2>
+            <p class="text-netflix-muted leading-relaxed whitespace-pre-wrap">{{ projet.histoire }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Bouton retour -->
+        <div class="flex gap-4">
+            <a href="/#machines" class="inline-block border border-netflix-accent text-netflix-accent px-6 py-2 rounded-full hover:bg-netflix-accent hover:text-white transition">
+                ← Retour aux projets
+            </a>
+            <a href="/contact" class="inline-block bg-netflix-accent text-white px-6 py-2 rounded-full hover:bg-red-700 transition">
+                Un projet similaire ? Contactez-moi
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

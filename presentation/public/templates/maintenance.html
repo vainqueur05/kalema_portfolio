@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Maintenance | Bridge Afrika{% endblock %}
+
+{% block extra_head %}
+<style>
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+    @keyframes pulse-glow {
+        0%, 100% { box-shadow: 0 0 20px rgba(229,9,20,0.3); }
+        50% { box-shadow: 0 0 60px rgba(229,9,20,0.8); }
+    }
+    @keyframes rotate-gear {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    @keyframes progress-bar {
+        0% { width: 0%; }
+        100% { width: 70%; }
+    }
+    .float-animation { animation: float 3s ease-in-out infinite; }
+    .glow-animation { animation: pulse-glow 2s ease-in-out infinite; }
+    .gear-left { animation: rotate-gear 4s linear infinite; }
+    .gear-right { animation: rotate-gear 3s linear infinite reverse; }
+    .progress-animation {
+        animation: progress-bar 2s ease-out forwards;
+        width: 0%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="min-h-screen flex items-center justify-center bg-netflix-dark px-4 relative overflow-hidden">
+    <!-- Fond animé subtil -->
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-10 left-10 w-64 h-64 bg-netflix-accent rounded-full blur-3xl"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 bg-netflix-accent rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="relative z-10 text-center max-w-2xl">
+        <!-- Icône animée -->
+        <div class="mb-8 float-animation">
+            <div class="relative inline-block glow-animation rounded-full p-8 bg-netflix-card/50 backdrop-blur-sm border border-white/5">
+                <i class="fas fa-cogs text-7xl text-netflix-accent gear-left"></i>
+                <i class="fas fa-cog text-5xl text-netflix-accent gear-right absolute top-2 right-2 opacity-50"></i>
+            </div>
+        </div>
+
+        <!-- Titre avec effet -->
+        <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-4 tracking-tight">
+            Site en <span class="text-netflix-accent">maintenance</span>
+        </h1>
+
+        <!-- Sous-titre -->
+        <p class="text-xl text-netflix-muted mb-3">
+            Nous peaufinons chaque détail pour vous offrir une expérience <span class="text-netflix-accent font-semibold">exceptionnelle</span>.
+        </p>
+
+        <!-- Message -->
+        <p class="text-base text-netflix-muted mb-8 max-w-lg mx-auto">
+            Nos ingénieurs sont à l'œuvre. Le site sera de retour dans quelques instants, plus rapide et plus beau.
+        </p>
+
+        <!-- Barre de progression simulée -->
+        <div class="max-w-xs mx-auto mb-8">
+            <div class="w-full bg-netflix-secondary rounded-full h-2 overflow-hidden">
+                <div class="bg-netflix-accent h-2 rounded-full progress-animation"></div>
+            </div>
+            <p class="text-xs text-netflix-muted mt-2">Progression en cours...</p>
+        </div>
+
+        <!-- Badge de patience -->
+        <div class="inline-flex items-center gap-2 bg-netflix-card border border-netflix-accent/30 text-netflix-accent px-6 py-3 rounded-full text-sm font-medium">
+            <i class="fas fa-clock"></i>
+            <span>Merci de votre patience</span>
+        </div>
+
+        <!-- Contact discret -->
+        <p class="text-xs text-netflix-muted mt-8 opacity-50">
+            Urgent ? <a href="mailto:vainqueur@bridge-afrika.com" class="text-netflix-accent hover:underline">vainqueur@bridge-afrika.com</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

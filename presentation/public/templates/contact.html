@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Contact | Bridge Afrika{% endblock %}
+{% block meta_description %}Contactez Vainqueur Kalema. Une idée, un projet, une question ? Choisissez votre canal.{% endblock %}
+
+{% block extra_head %}
+<style>
+    .coffre-enveloppe { cursor: pointer; transition: transform 0.3s; }
+    .coffre-enveloppe:hover { transform: scale(1.1); }
+    .coffre-enveloppe.opened { transform: rotateY(180deg); }
+    .phone-vintage { cursor: pointer; animation: ring 2s infinite; }
+    @keyframes ring { 0%,100% { transform: rotate(0); } 10% { transform: rotate(10deg); } 20% { transform: rotate(-10deg); } 30% { transform: rotate(10deg); } 40% { transform: rotate(0); } }
+    .post-it { transition: transform 0.2s; cursor: grab; }
+    .post-it:active { cursor: grabbing; }
+    .porte-secrete { cursor: pointer; transition: transform 0.5s; }
+    .porte-secrete.open { transform: translateX(100px); }
+    .lien-card { transition: all 0.3s; }
+    .lien-card:hover { border-color: #E50914; transform: translateY(-3px); }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="min-h-screen bg-netflix-dark pt-24 pb-16 px-4">
+    <div class="max-w-4xl mx-auto text-center">
+        <h1 class="text-4xl md:text-6xl font-extrabold mb-4">Contactez-<span class="text-netflix-accent">moi</span></h1>
+        <p class="text-netflix-muted mb-12">Choisissez votre canal. Je suis à l'écoute.</p>
+
+        <!-- Liens dynamiques depuis la base de données -->
+        <div class="bg-netflix-card rounded-2xl p-8 mb-12">
+            <h3 class="text-xl font-bold text-white mb-6">Mes canaux</h3>
+            <div class="flex flex-wrap justify-center gap-6">
+                {% if liens %}
+                    {% for lien in liens %}
+                    <a href="{{ lien.url }}" target="_blank" rel="noopener" class="lien-card bg-netflix-secondary w-20 h-24 rounded-xl flex flex-col items-center justify-center text-2xl border border-white/5">
+                        <i class="{{ lien.icone }}"></i>
+                        <span class="text-xs mt-1 text-netflix-muted">{{ lien.nom }}</span>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-netflix-muted">Aucun lien de contact pour le moment.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Coffre aux trésors -->
+        <div class="bg-netflix-card rounded-2xl p-8 mb-12">
+            <h3 class="text-xl font-bold text-white mb-6">Le coffre aux trésors</h3>
+            <div class="flex justify-center gap-6">
+                <div class="coffre-enveloppe bg-netflix-secondary w-20 h-24 rounded-xl flex items-center justify-center text-2xl" data-canal="email" onclick="openEnvelope(this)">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="coffre-enveloppe bg-netflix-secondary w-20 h-24 rounded-xl flex items-center justify-center text-2xl" data-canal="whatsapp" onclick="openEnvelope(this)">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <div class="coffre-enveloppe bg-netflix-secondary w-20 h-24 rounded-xl flex items-center justify-center text-2xl" data-canal="discord" onclick="openEnvelope(this)">
+                    <i class="fab fa-discord"></i>
+                </div>
+            </div>
+            <p id="coffre-reveal" class="text-netflix-muted mt-4">Cliquez sur une enveloppe...</p>
+        </div>
+
+        <!-- Mur de post-it -->
+        <div class="bg-netflix-card rounded-2xl p-8 mb-12">
+            <h3 class="text-xl font-bold text-white mb-4">Mur de messages</h3>
+            <div id="postit-wall" class="flex flex-wrap gap-4 justify-center min-h-[60px]"></div>
+            <textarea id="postit-input" class="w-full max-w-md bg-netflix-dark border border-white/10 rounded-xl px-4 py-3 text-white resize-none mt-4" rows="2" placeholder="Collez votre message ici..."></textarea>
+            <button id="postit-btn" class="mt-2 bg-netflix-accent text-white px-4 py-2 rounded-full">Coller</button>
+        </div>
+
+        <!-- Téléphone vintage -->
+        <div class="bg-netflix-card rounded-2xl p-8 mb-12">
+            <h3 class="text-xl font-bold text-white mb-4">Le téléphone vintage</h3>
+            <div class="phone-vintage inline-block text-6xl cursor-pointer" id="vintage-phone" onclick="ringPhone()">
+                <i class="fas fa-phone-alt text-netflix-accent"></i>
+            </div>
+            <p id="phone-message" class="text-netflix-muted mt-4">Décrochez...</p>
+        </div>
+
+        <!-- Porte secrète -->
+        <div class="bg-netflix-card rounded-2xl p-8 mb-12">
+            <h3 class="text-xl font-bold text-white mb-4">La porte secrète</h3>
+            <div class="porte-secrete inline-block text-6xl cursor-pointer" id="porte-secrete" onclick="openDoor()">
+                <i class="fas fa-door-open text-netflix-accent"></i>
+            </div>
+            <p id="door-message" class="text-netflix-muted mt-4">Faites glisser pour ouvrir...</p>
+        </div>
+
+        <!-- Formulaire classique -->
+        <div class="bg-netflix-card rounded-2xl p-8 mt-12">
+            <h3 class="text-xl font-bold text-white mb-6">Formulaire classique</h3>
+            <form method="POST" class="space-y-4 max-w-md mx-auto text-left">
+                <input type="text" name="nom" placeholder="Votre nom" required class="w-full bg-netflix-dark border border-white/10 rounded-xl px-4 py-3 text-white">
+                <input type="email" name="email" placeholder="Votre email" required class="w-full bg-netflix-dark border border-white/10 rounded-xl px-4 py-3 text-white">
+                <input type="tel" name="telephone" placeholder="Votre téléphone (optionnel)" class="w-full bg-netflix-dark border border-white/10 rounded-xl px-4 py-3 text-white">
+                <textarea name="message" rows="4" placeholder="Votre message" required class="w-full bg-netflix-dark border border-white/10 rounded-xl px-4 py-3 text-white resize-none"></textarea>
+                <button type="submit" class="w-full bg-netflix-accent text-white py-3 rounded-xl font-semibold hover:bg-red-700 transition">Envoyer</button>
+            </form>
+            {% if success %}
+            <p class="text-green-400 mt-4 text-center">{{ success }}</p>
+            {% endif %}
+            {% if erreur %}
+            <p class="text-red-400 mt-4 text-center">{{ erreur }}</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Coffre aux trésors (avec données dynamiques)
+    const canaux = {
+        email: '{{ liens | selectattr("nom", "equalto", "Email") | map(attribute="url") | first or "vainqueur@bridge-afrika.com" }}',
+        whatsapp: '{{ liens | selectattr("nom", "equalto", "WhatsApp") | map(attribute="url") | first or "https://wa.me/123456789" }}',
+        discord: 'Discord : Vainqueur#1234'
+    };
+    function openEnvelope(el) {
+        el.classList.toggle('opened');
+        const canal = el.dataset.canal;
+        const reveal = document.getElementById('coffre-reveal');
+        if (!reveal) return;
+        if (el.classList.contains('opened')) {
+            reveal.innerHTML = '<span class="text-white">' + canaux[canal] + '</span>';
+        } else {
+            reveal.textContent = 'Cliquez sur une enveloppe...';
+        }
+    }
+
+    // Mur de post-it (localStorage)
+    const postitWall = document.getElementById('postit-wall');
+    const postitInput = document.getElementById('postit-input');
+    const postitBtn = document.getElementById('postit-btn');
+    if (postitWall && postitBtn) {
+        const postits = JSON.parse(localStorage.getItem('bridge-postits') || '[]');
+        function renderPostits() {
+            postitWall.innerHTML = postits.map((p, i) => `
+                <div class="post-it bg-yellow-100 text-gray-900 text-xs p-2 rounded shadow w-24 h-24 flex items-center justify-center transform rotate-${i % 3 - 1}">
+                    ${p}
+                </div>
+            `).join('');
+        }
+        renderPostits();
+        postitBtn.addEventListener('click', () => {
+            const val = postitInput.value.trim();
+            if (!val) return;
+            postits.push(val);
+            localStorage.setItem('bridge-postits', JSON.stringify(postits));
+            postitInput.value = '';
+            renderPostits();
+        });
+    }
+
+    // Téléphone vintage
+    const phone = document.getElementById('vintage-phone');
+    if (phone) {
+        phone.addEventListener('click', function() {
+            const messages = ['Allô ? Ici Vainqueur. Laissez-moi un message.', 'Vous avez un projet ? Parlons-en !', 'Contactez-moi sur WhatsApp ou par email.'];
+            const msgEl = document.getElementById('phone-message');
+            if (msgEl) msgEl.innerHTML = '<span class="text-white">' + messages[Math.floor(Math.random() * messages.length)] + '</span>';
+        });
+    }
+
+    // Porte secrète
+    const door = document.getElementById('porte-secrete');
+    if (door) {
+        door.addEventListener('click', function() {
+            this.classList.toggle('open');
+            const msgEl = document.getElementById('door-message');
+            if (msgEl) {
+                if (this.classList.contains('open')) {
+                    msgEl.innerHTML = '<span class="text-white">contact@bridge-afrika.com – mot de passe : coeur</span>';
+                } else {
+                    msgEl.textContent = 'Faites glisser pour ouvrir...';
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

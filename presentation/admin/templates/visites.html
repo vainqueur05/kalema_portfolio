@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visites – Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { 'netflix-dark': '#0A0A0A', 'netflix-card': '#141414', 'netflix-secondary': '#1E1E1E', 'netflix-accent': '#E50914' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-netflix-dark text-white flex">
+    <aside class="w-72 bg-netflix-card min-h-screen p-6 border-r border-white/5 flex flex-col">
+        <a href="/admin" class="text-2xl font-bold text-netflix-accent mb-10">VK<span class="text-white">.</span></a>
+        <nav class="flex-1 space-y-1 text-sm">
+            <a href="/admin" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-tachometer-alt w-5"></i> Dashboard</a>
+            <a href="/admin/visites" class="flex items-center gap-3 py-3 px-4 rounded-xl bg-netflix-accent text-white"><i class="fas fa-chart-line w-5"></i> Visites</a>
+        </nav>
+        <div class="pt-4 border-t border-white/5">
+            <a href="/admin/logout" class="flex items-center gap-3 py-3 px-4 rounded-xl text-red-400 hover:bg-netflix-secondary text-sm"><i class="fas fa-sign-out-alt w-5"></i> Déconnexion</a>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-8 overflow-y-auto">
+        <h1 class="text-4xl font-bold mb-2">Suivi des <span class="text-netflix-accent">visites</span></h1>
+        <p class="text-gray-400 mb-8">Analysez le trafic de votre portfolio.</p>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <div class="bg-netflix-card p-6 rounded-2xl border border-white/5 text-center">
+                <i class="fas fa-users text-3xl text-netflix-accent mb-3"></i>
+                <p class="text-3xl font-bold text-white">{{ stats.total_visites }}</p>
+                <p class="text-gray-400 text-sm mt-1">Total visites</p>
+            </div>
+            <div class="bg-netflix-card p-6 rounded-2xl border border-white/5 text-center">
+                <i class="fas fa-globe text-3xl text-blue-400 mb-3"></i>
+                <p class="text-3xl font-bold text-white">{{ stats.par_pays|length }}</p>
+                <p class="text-gray-400 text-sm mt-1">Pays</p>
+            </div>
+            <div class="bg-netflix-card p-6 rounded-2xl border border-white/5 text-center">
+                <i class="fas fa-desktop text-3xl text-green-400 mb-3"></i>
+                <p class="text-3xl font-bold text-white">{{ stats.par_page|length }}</p>
+                <p class="text-gray-400 text-sm mt-1">Pages visitées</p>
+            </div>
+            <div class="bg-netflix-card p-6 rounded-2xl border border-white/5 text-center">
+                <i class="fas fa-mobile-alt text-3xl text-purple-400 mb-3"></i>
+                <p class="text-3xl font-bold text-white">{{ stats.par_appareil|length }}</p>
+                <p class="text-gray-400 text-sm mt-1">Types d'appareils</p>
+            </div>
+        </div>
+
+        <!-- Graphique -->
+        <div class="bg-netflix-card p-6 rounded-2xl border border-white/5 mb-8">
+            <h3 class="text-lg font-semibold text-white mb-4">Top pays</h3>
+            <canvas id="paysChart" height="100"></canvas>
+        </div>
+
+        <!-- Tableau -->
+        <div class="bg-netflix-card p-6 rounded-2xl border border-white/5">
+            <h3 class="text-lg font-semibold text-white mb-4">Dernières visites</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-gray-400 border-b border-white/5">
+                        <tr>
+                            <th class="py-3 px-4">Page</th>
+                            <th class="py-3 px-4">IP</th>
+                            <th class="py-3 px-4">Pays</th>
+                            <th class="py-3 px-4">Ville</th>
+                            <th class="py-3 px-4">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in visites %}
+                        <tr class="border-b border-white/5 hover:bg-netflix-secondary/30 transition">
+                            <td class="py-3 px-4">{{ v.page }}</td>
+                            <td class="py-3 px-4 text-gray-400">{{ v.ip }}</td>
+                            <td class="py-3 px-4">{{ v.pays or 'Inconnu' }}</td>
+                            <td class="py-3 px-4 text-gray-400">{{ v.ville or '-' }}</td>
+                            <td class="py-3 px-4 text-gray-400 text-xs">{{ v.date }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const ctx = document.getElementById('paysChart').getContext('2d');
+        const data = {{ stats.par_pays | tojson }};
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.pays),
+                datasets: [{ label: 'Visites', data: data.map(d => d.nombre), backgroundColor: '#E50914', borderRadius: 5 }]
+            },
+            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#B3B3B3' } }, x: { ticks: { color: '#B3B3B3' } } } }
+        });
+    </script>
+</body>
+</html>

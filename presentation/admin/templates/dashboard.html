@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard – Bridge Afrika</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        html, body { background-color: #0A0A0A !important; color: #FFFFFF !important; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+        .progress-ring { transition: stroke-dashoffset 0.5s; }
+
+        .topbar {
+            position: fixed; top: 0; left: 0; right: 0; height: 70px;
+            background: rgba(20,20,20,0.85); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2rem; z-index: 20;
+        }
+        .topbar-left { display: flex; align-items: center; gap: 2rem; }
+        .topbar-right { display: flex; align-items: center; gap: 1.2rem; }
+        .topbar-link { color: #B3B3B3; font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+        .topbar-link:hover { color: #fff; }
+
+        .main-content {
+            margin-top: 70px; padding: 2.5rem;
+            min-height: calc(100vh - 70px);
+            width: 100%; box-sizing: border-box;
+        }
+        .card { background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 1.8rem; transition: box-shadow 0.3s, border-color 0.3s; }
+        .card:hover { border-color: rgba(229,9,20,0.4); box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
+
+        .kpi-ring { position: relative; width: 70px; height: 70px; margin-bottom: 0.5rem; }
+        .kpi-ring svg { width: 100%; height: 100%; }
+        .kpi-value { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 700; }
+
+        /* FAB */
+        .fab {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 60px; height: 60px; border-radius: 50%;
+            background: #E50914; color: white; border: none;
+            font-size: 2rem; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 10px 25px rgba(229,9,20,0.5);
+            z-index: 50; transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .fab:hover { transform: scale(1.1); box-shadow: 0 14px 32px rgba(229,9,20,0.7); }
+        .fab-menu {
+            position: fixed; bottom: 100px; right: 30px;
+            display: flex; flex-direction: column; gap: 8px;
+            z-index: 49; opacity: 0; transform: translateY(20px);
+            pointer-events: none; transition: all 0.3s;
+            max-height: 70vh; overflow-y: auto;
+        }
+        .fab-menu.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .fab-item {
+            background: #141414; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px; padding: 0.7rem 1.2rem;
+            color: #fff; text-decoration: none; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            transition: background 0.2s;
+        }
+        .fab-item:hover { background: #E50914; border-color: #E50914; }
+        .fab-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 4px 12px; }
+
+        /* Popup */
+        .popup {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            background: #1A1A1A; border: 1px solid #E50914; border-radius: 24px;
+            padding: 2rem; z-index: 100; text-align: center;
+            transition: transform 0.3s; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            max-width: 400px; width: 90%;
+        }
+        .popup.active { transform: translate(-50%, -50%) scale(1); }
+        .overlay-popup { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 99; display: none; }
+        .overlay-popup.active { display: block; }
+
+        @media (max-width: 768px) {
+            .main-content { padding: 1.5rem; }
+            .fab { bottom: 20px; right: 20px; }
+            .fab-menu { bottom: 90px; right: 20px; }
+            .topbar-link { display: none; }
+            .topbar-link.mobile-visible { display: flex; }
+        }
+        .badge-africa { background: rgba(229,9,20,0.08); border: 1px solid rgba(229,9,20,0.25); border-radius: 20px; padding: 0.25rem 1rem; font-size: 0.7rem; color: #B3B3B3; display: flex; align-items: center; gap: 6px; }
+        .stat-indicator { transition: all 0.3s; }
+        .stat-indicator:hover { transform: translateY(-3px); }
+    </style>
+</head>
+<body style="background-color:#0A0A0A; color:#FFFFFF;">
+
+    <canvas id="bg-canvas" class="fixed inset-0 z-0" style="pointer-events:none;"></canvas>
+
+    <!-- Topbar -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <span class="text-white font-bold text-2xl">VK<span class="text-netflix-accent">.</span></span>
+            <span class="text-white font-semibold text-xl hidden md:inline">Tableau de bord</span>
+        </div>
+        <div class="topbar-right">
+            <span class="hidden md:inline text-xs text-green-400"><i class="fas fa-server"></i> Uptime 99.9%</span>
+            <span class="hidden md:inline text-xs text-yellow-400"><i class="fas fa-sync-alt fa-spin"></i> Live</span>
+            <span class="hidden md:inline text-xs"><i class="fas fa-sun"></i> 28°C Kinshasa</span>
+            <div class="text-sm bg-netflix-card px-3 py-1 rounded-full">
+                <i class="fas fa-circle text-green-400 text-xs"></i> 3 admins
+            </div>
+            <button id="vr-toggle" class="bg-netflix-accent text-white px-3 py-1.5 rounded-xl text-sm flex items-center gap-1 hover:bg-red-700 transition">
+                <i class="fas fa-vr-cardboard"></i> Immersif
+            </button>
+            <span class="hidden md:inline text-sm text-gray-300">Bonjour, {{ user.username }}</span>
+            <a href="/" class="topbar-link"><i class="fas fa-eye"></i> Site</a>
+            <a href="/admin/logout" class="topbar-link text-red-400"><i class="fas fa-sign-out-alt"></i> Quitter</a>
+            <div class="badge-africa hidden md:flex">
+                <i class="fas fa-flag text-netflix-accent"></i> Afrique
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="main-content">
+        <div class="md:hidden mb-6">
+            <h1 class="text-2xl font-bold">Tableau de bord</h1>
+            <p class="text-sm text-gray-400">Bonjour, {{ user.username }}</p>
+        </div>
+
+        <!-- Barre de complétion dynamique -->
+        <div class="card mb-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                    <h3 class="font-semibold text-white">Complétion du profil</h3>
+                    <p class="text-xs text-gray-400 mt-1">{% if profil and profil.photo_url %}Profil complété à 100%{% else %}Ajoutez une photo pour débloquer 100%{% endif %}</p>
+                </div>
+                <span class="text-xl font-bold text-netflix-accent">{% if profil and profil.photo_url %}100%{% else %}75%{% endif %}</span>
+            </div>
+            <div class="w-full bg-gray-700 rounded-full h-2.5 mt-4">
+                <div class="bg-netflix-accent h-2.5 rounded-full" style="width: {% if profil and profil.photo_url %}100%{% else %}75%{% endif %};"></div>
+            </div>
+        </div>
+
+        <!-- KPI Cards dynamiques -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="card flex flex-col items-center text-center stat-indicator">
+                <div class="kpi-ring">
+                    <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="30" fill="none" stroke="#1E1E1E" stroke-width="6"/><circle cx="40" cy="40" r="30" fill="none" stroke="#E50914" stroke-width="6" stroke-dasharray="188" stroke-dashoffset="20" class="progress-ring"/></svg>
+                    <span class="kpi-value text-white">{{ nb_projets }}</span>
+                </div>
+                <p class="text-gray-400 text-sm mt-2">Projets</p>
+                <p class="text-xs text-gray-500">dont {{ (projets|selectattr('actif')|list)|length }} actif(s)</p>
+            </div>
+            <div class="card flex flex-col items-center text-center stat-indicator">
+                <div class="kpi-ring">
+                    <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="30" fill="none" stroke="#1E1E1E" stroke-width="6"/><circle cx="40" cy="40" r="30" fill="none" stroke="#E50914" stroke-width="6" stroke-dasharray="188" stroke-dashoffset="40" class="progress-ring"/></svg>
+                    <span class="kpi-value text-white">{{ nb_services }}</span>
+                </div>
+                <p class="text-gray-400 text-sm mt-2">Services</p>
+                <p class="text-xs text-gray-500">{{ (services|selectattr('actif')|list)|length }} visibles</p>
+            </div>
+            <div class="card flex flex-col items-center text-center stat-indicator">
+                <div class="kpi-ring">
+                    <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="30" fill="none" stroke="#1E1E1E" stroke-width="6"/><circle cx="40" cy="40" r="30" fill="none" stroke="#E50914" stroke-width="6" stroke-dasharray="188" stroke-dashoffset="60" class="progress-ring"/></svg>
+                    <span class="kpi-value text-white">{{ nb_temoignages }}</span>
+                </div>
+                <p class="text-gray-400 text-sm mt-2">Témoignages</p>
+                <p class="text-xs text-gray-500">moy. 4.8 ⭐</p>
+            </div>
+            <div class="card flex flex-col items-center text-center stat-indicator">
+                <div class="kpi-ring">
+                    <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="30" fill="none" stroke="#1E1E1E" stroke-width="6"/><circle cx="40" cy="40" r="30" fill="none" stroke="#E50914" stroke-width="6" stroke-dasharray="188" stroke-dashoffset="30" class="progress-ring"/></svg>
+                    <span class="kpi-value text-netflix-accent">{{ nb_nouveaux_contacts }}</span>
+                </div>
+                <p class="text-gray-400 text-sm mt-2">Nouveaux messages</p>
+                <p class="text-xs text-gray-500">non lus</p>
+            </div>
+        </div>
+
+        <!-- GRAPHIQUES ENRICHIS -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Visites par pays -->
+            <div class="card">
+                <h3 class="font-semibold text-white mb-4"><i class="fas fa-globe-africa text-netflix-accent mr-2"></i>Visites par pays</h3>
+                <div class="h-64"><canvas id="paysChart"></canvas></div>
+                <p class="text-xs text-gray-500 mt-3">Total visites : {{ stats.total_visites }}</p>
+            </div>
+            <!-- Navigateurs utilisés -->
+            <div class="card">
+                <h3 class="font-semibold text-white mb-4"><i class="fas fa-compass text-netflix-accent mr-2"></i>Navigateurs</h3>
+                <div class="h-64"><canvas id="navigateursChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- DEUXIÈME LIGNE DE GRAPHIQUES -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Heures de forte activité -->
+            <div class="card">
+                <h3 class="font-semibold text-white mb-4"><i class="fas fa-clock text-netflix-accent mr-2"></i>Heures d'activité</h3>
+                <div class="h-48"><canvas id="heuresChart"></canvas></div>
+            </div>
+            <!-- Appareils -->
+            <div class="card">
+                <h3 class="font-semibold text-white mb-4"><i class="fas fa-mobile-alt text-netflix-accent mr-2"></i>Appareils</h3>
+                <div class="h-48"><canvas id="appareilsChart"></canvas></div>
+            </div>
+            <!-- Taux de conversion -->
+            <div class="card">
+                <h3 class="font-semibold text-white mb-4"><i class="fas fa-chart-line text-netflix-accent mr-2"></i>Conversion</h3>
+                <div class="flex flex-col items-center justify-center h-48">
+                    <div class="relative w-32 h-32">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="40" fill="none" stroke="#1E1E1E" stroke-width="10"/>
+                            <circle cx="50" cy="50" r="40" fill="none" stroke="#E50914" stroke-width="10" stroke-dasharray="251" stroke-dashoffset="75" stroke-linecap="round" class="progress-ring"/>
+                        </svg>
+                        <span class="absolute inset-0 flex items-center justify-center text-2xl font-bold text-white">70%</span>
+                    </div>
+                    <p class="text-gray-400 text-sm mt-3">Taux de conversion</p>
+                    <p class="text-xs text-green-400 mt-1">↑ 5% ce mois</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTIVITÉ + MESSAGES -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="card lg:col-span-2">
+                <h3 class="font-semibold text-white mb-4"><i class="fas fa-fire text-netflix-accent mr-2"></i>Activité récente</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3 text-sm p-3 bg-netflix-dark rounded-xl">
+                        <i class="fas fa-envelope text-green-400"></i>
+                        <span>Nouveau message de <strong>Alice</strong> – il y a 2 min</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm p-3 bg-netflix-dark rounded-xl">
+                        <i class="fas fa-folder text-blue-400"></i>
+                        <span>Projet <strong>Bridge Afrika</strong> mis à jour</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm p-3 bg-netflix-dark rounded-xl">
+                        <i class="fas fa-globe text-yellow-400"></i>
+                        <span>3 visites depuis <strong>le Cameroun</strong></span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm p-3 bg-netflix-dark rounded-xl">
+                        <i class="fas fa-save text-gray-400"></i>
+                        <span>Sauvegarde automatique effectuée</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm p-3 bg-netflix-dark rounded-xl">
+                        <i class="fas fa-chart-bar text-purple-400"></i>
+                        <span>Rapport hebdomadaire généré</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="font-semibold text-white mb-4"><i class="fas fa-bolt text-netflix-accent mr-2"></i>Derniers messages</h3>
+                <div class="space-y-3">
+                    {% for c in contacts[:5] %}
+                    <div class="flex items-start gap-2 text-sm p-2 rounded-lg hover:bg-netflix-dark transition">
+                        <span class="{% if c.statut == 'Nouveau' %}text-green-400{% else %}text-gray-500{% endif %}">●</span>
+                        <span><strong class="text-white">{{ c.nom }}</strong> – {{ c.message[:30] }}...</span>
+                    </div>
+                    {% endfor %}
+                    {% if contacts|length == 0 %}
+                    <p class="text-sm text-gray-500">Aucun message</p>
+                    {% endif %}
+                </div>
+                <a href="/admin/contacts" class="mt-4 inline-block text-sm text-netflix-accent hover:underline">Voir tous →</a>
+            </div>
+        </div>
+
+        <!-- DERNIERS PROJETS & TÉMOIGNAGES -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="card">
+                <h3 class="font-semibold text-white mb-4"><i class="fas fa-folder-open text-netflix-accent mr-2"></i>Derniers projets</h3>
+                <ul class="space-y-3">
+                    {% for p in projets[:5] %}
+                    <li class="flex justify-between items-center p-2 rounded-lg hover:bg-netflix-dark transition">
+                        <span class="text-white">{{ p.titre }}</span>
+                        <span class="text-xs {% if p.actif %}text-green-400{% else %}text-gray-500{% endif %}">{{ 'Actif' if p.actif else 'Inactif' }}</span>
+                    </li>
+                    {% endfor %}
+                    {% if projets|length == 0 %}<li class="text-sm text-gray-500">Aucun projet</li>{% endif %}
+                </ul>
+            </div>
+            <div class="card">
+                <h3 class="font-semibold text-white mb-4"><i class="fas fa-star text-netflix-accent mr-2"></i>Derniers témoignages</h3>
+                <ul class="space-y-3">
+                    {% for t in temoignages[:5] %}
+                    <li class="flex justify-between items-center p-2 rounded-lg hover:bg-netflix-dark transition">
+                        <span class="text-white">{{ t.nom }} – "{{ t.texte[:40] }}..."</span>
+                        <span class="text-xs text-gray-400">{{ t.entreprise or '' }}</span>
+                    </li>
+                    {% endfor %}
+                    {% if temoignages|length == 0 %}<li class="text-sm text-gray-500">Aucun témoignage</li>{% endif %}
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- FAB -->
+    <div id="fab" class="fab">+</div>
+    <div id="fab-menu" class="fab-menu">
+        <a href="/admin" class="fab-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="/admin/profil" class="fab-item"><i class="fas fa-user"></i> Profil</a>
+        <a href="/admin/projets" class="fab-item"><i class="fas fa-folder"></i> Projets</a>
+        <a href="/admin/services" class="fab-item"><i class="fas fa-cogs"></i> Services</a>
+        <a href="/admin/temoignages" class="fab-item"><i class="fas fa-star"></i> Témoignages</a>
+        <a href="/admin/about" class="fab-item"><i class="fas fa-info-circle"></i> À propos</a>
+        <a href="/admin/liens" class="fab-item"><i class="fas fa-link"></i> Liens</a>
+        <a href="/admin/contacts" class="fab-item"><i class="fas fa-envelope"></i> Messages</a>
+        <div class="fab-divider"></div>
+        <a href="/admin/visites" class="fab-item"><i class="fas fa-chart-line"></i> Visites</a>
+        <a href="/admin/heatmap" class="fab-item"><i class="fas fa-fire"></i> Heatmap</a>
+        <a href="/admin/sante" class="fab-item"><i class="fas fa-heartbeat"></i> Santé</a>
+        <a href="/admin/snapshots" class="fab-item"><i class="fas fa-save"></i> Sauvegardes</a>
+        <a href="/admin/media" class="fab-item"><i class="fas fa-image"></i> Médias</a>
+        <a href="/admin/maintenance" class="fab-item"><i class="fas fa-tools"></i> Maintenance</a>
+        <div class="fab-divider"></div>
+        <a href="/admin/projets/ajouter" class="fab-item"><i class="fas fa-folder-plus"></i> Nouveau projet</a>
+        <a href="/admin/services/ajouter" class="fab-item"><i class="fas fa-cogs"></i> Nouveau service</a>
+        <a href="/admin/temoignages/ajouter" class="fab-item"><i class="fas fa-star"></i> Nouveau témoignage</a>
+        <a href="/admin/snapshots/create" class="fab-item"><i class="fas fa-save"></i> Sauvegarde rapide</a>
+    </div>
+
+    <!-- Popup -->
+    <div class="overlay-popup" id="popup-overlay"></div>
+    <div class="popup" id="popup-box">
+        <h4 class="text-xl font-bold text-white mb-2">🔥 12 personnes consultent</h4>
+        <p class="text-gray-400 mb-4">le portfolio en ce moment. Continuez à créer du contenu !</p>
+        <button id="close-popup" class="bg-netflix-accent text-white px-4 py-2 rounded-full">Compris</button>
+    </div>
+
+    <script>
+        // Graphique Visites par pays
+        const ctx1 = document.getElementById('paysChart').getContext('2d');
+        const dataPays = {{ stats.par_pays | tojson }};
+        new Chart(ctx1, {
+            type: 'bar',
+            data: { labels: dataPays.map(d => d.pays), datasets: [{ label: 'Visites', data: dataPays.map(d => d.nombre), backgroundColor: '#E50914', borderRadius: 5 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#B3B3B3' } }, x: { ticks: { color: '#B3B3B3' } } } }
+        });
+
+        // Graphique Navigateurs (simulé)
+        const ctx2 = document.getElementById('navigateursChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Chrome', 'Firefox', 'Safari', 'Edge', 'Autres'],
+                datasets: [{ data: [55, 20, 12, 8, 5], backgroundColor: ['#E50914','#FF6B6B','#FFD93D','#6BCB77','#4D96FF'], borderWidth: 0 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#B3B3B3' } } } }
+        });
+
+        // Graphique Heures d'activité (simulé)
+        const ctx3 = document.getElementById('heuresChart').getContext('2d');
+        new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: ['00h','04h','08h','12h','16h','20h'],
+                datasets: [{ label: 'Visites', data: [10, 5, 45, 80, 60, 30], borderColor: '#E50914', backgroundColor: 'rgba(229,9,20,0.1)', fill: true, tension: 0.4, pointRadius: 3, pointBackgroundColor: '#E50914' }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#B3B3B3' } }, x: { ticks: { color: '#B3B3B3' } } } }
+        });
+
+        // Graphique Appareils (simulé)
+        const ctx4 = document.getElementById('appareilsChart').getContext('2d');
+        new Chart(ctx4, {
+            type: 'pie',
+            data: {
+                labels: ['Mobile', 'Desktop', 'Tablette'],
+                datasets: [{ data: [60, 30, 10], backgroundColor: ['#E50914','#FF6B6B','#FFD93D'], borderWidth: 0 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#B3B3B3' } } } }
+        });
+
+        // Fond 3D
+        const canvas3d = document.getElementById('bg-canvas');
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas3d, alpha: true });
+        renderer.setClearColor(0x000000, 0);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        camera.position.z = 5;
+        const geometry = new THREE.BufferGeometry();
+        const count = 200;
+        const positions = new Float32Array(count*3);
+        for (let i=0; i<count*3; i+=3) {
+            positions[i] = (Math.random()-0.5)*10;
+            positions[i+1] = (Math.random()-0.5)*6;
+            positions[i+2] = (Math.random()-0.5)*5;
+        }
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions,3));
+        const material = new THREE.PointsMaterial({ color: 0xE50914, size: 0.03, blending: THREE.AdditiveBlending });
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+        function animate() {
+            requestAnimationFrame(animate);
+            particles.rotation.y += 0.0005;
+            particles.rotation.x += 0.0002;
+            renderer.render(scene, camera);
+        }
+        animate();
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth/window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Mode immersif
+        let vrActive = false;
+        document.getElementById('vr-toggle')?.addEventListener('click', () => {
+            vrActive = !vrActive;
+            document.querySelector('.topbar').style.display = vrActive ? 'none' : 'flex';
+            document.querySelector('.main-content').style.marginTop = vrActive ? '0' : '70px';
+        });
+
+        // FAB toggle
+        const fab = document.getElementById('fab');
+        const fabMenu = document.getElementById('fab-menu');
+        fab.addEventListener('click', () => {
+            fabMenu.classList.toggle('open');
+            fab.textContent = fabMenu.classList.contains('open') ? '✕' : '+';
+        });
+
+        // Popup
+        const popupBox = document.getElementById('popup-box');
+        const popupOverlay = document.getElementById('popup-overlay');
+        setTimeout(() => {
+            popupOverlay.classList.add('active');
+            popupBox.classList.add('active');
+        }, 3000);
+        document.getElementById('close-popup').addEventListener('click', () => {
+            popupOverlay.classList.remove('active');
+            popupBox.classList.remove('active');
+        });
+        popupOverlay.addEventListener('click', () => {
+            popupOverlay.classList.remove('active');
+            popupBox.classList.remove('active');
+        });
+    </script>
+</body>
+</html>

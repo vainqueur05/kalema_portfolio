@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Services | Bridge Afrika{% endblock %}
+{% block meta_description %}Services de développement web, automatisation et conseil par Vainqueur Kalema. Du MVP à la solution complète.{% endblock %}
+
+{% block extra_head %}
+<style>
+    .service-icon { transition: transform 0.4s; }
+    .service-icon:hover { transform: scale(1.2) rotate(10deg); }
+    .sablier-demo { width: 100px; height: 150px; background: rgba(255,255,255,0.05); border-radius: 1rem; position: relative; overflow: hidden; margin: 0 auto; }
+    .sablier-sand { position: absolute; bottom: 0; width: 100%; background: #E50914; transition: height 0.3s; }
+    .comparator-card { transition: all 0.3s; }
+    .comparator-card:hover { border-color: #E50914; transform: translateY(-5px); }
+    .boussole-wheel { width: 200px; height: 200px; border-radius: 50%; border: 4px solid #E50914; position: relative; margin: 0 auto; cursor: pointer; }
+    .boussole-pointer { position: absolute; top: 50%; left: 50%; transform-origin: 0 0; width: 80px; height: 3px; background: #E50914; }
+    .boussole-wheel.spinning .boussole-pointer { animation: spin-boussole 2s ease-out forwards; }
+    @keyframes spin-boussole { from { transform: rotate(0deg); } to { transform: rotate(720deg); } }
+
+    /* Comparateur visuel */
+    .comparison-box {
+        background: rgba(20,20,20,0.8);
+        border-radius: 1rem;
+        padding: 2rem;
+        transition: all 0.3s;
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    .comparison-message { font-size: 1.1rem; transition: all 0.3s; }
+
+    /* Quiz */
+    .quiz-option-btn { transition: all 0.3s; }
+    .quiz-option-btn:hover { transform: scale(1.05); }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="min-h-screen bg-netflix-dark pt-24 pb-16 px-4">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-center mb-4">Mes <span class="text-netflix-accent">Services</span></h1>
+        <p class="text-center text-netflix-muted mb-12">Des super-pouvoirs pour votre projet numérique</p>
+
+        <!-- Carte des super-pouvoirs (dynamique) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            {% for service in services %}
+   <div class="card-project service-card p-6 text-center">
+    {% if service.icone %}
+    <i class="{{ service.icone }} text-5xl text-netflix-accent mb-4 service-icon"></i>
+    {% endif %}
+    <h3 class="project-title text-xl mb-2">{{ service.nom }}</h3>
+    <p class="project-excerpt">{{ service.description }}</p>
+    {% if service.prix %}
+    <p class="text-netflix-accent font-bold mt-2 service-price">{{ service.prix }} €</p>
+    {% endif %}
+</div>
+            {% endfor %}
+        </div>
+
+        <!-- Démonstration interactive : sablier inversé -->
+        <div class="bg-netflix-card rounded-2xl p-8 mb-16 text-center">
+            <h3 class="text-2xl font-bold text-white mb-4">Gain de temps estimé</h3>
+            <p class="text-netflix-muted mb-4">Déplacez le curseur pour voir le temps que je peux vous faire gagner :</p>
+            <input type="range" id="sablier-slider" min="1" max="100" value="50" class="w-full max-w-md mb-4">
+            <div class="sablier-demo">
+                <div class="sablier-sand" style="height: 50%;" id="sablier-sand"></div>
+            </div>
+            <p class="text-white mt-4" id="sablier-label">~50 heures économisées</p>
+        </div>
+
+        <!-- NOUVEAU : Quiz de découverte -->
+        <div class="bg-netflix-card rounded-2xl p-8 mb-16 text-center">
+            <h3 class="text-2xl font-bold text-white mb-6">Quel service est fait pour vous ?</h3>
+            <div id="quiz-container">
+                <p id="quiz-question" class="text-white text-lg mb-6">Quel est votre besoin principal ?</p>
+                <div id="quiz-options" class="flex flex-col md:flex-row gap-4 justify-center mb-4"></div>
+                <p id="quiz-step" class="text-netflix-muted text-sm">Étape 1/2</p>
+            </div>
+            <div id="quiz-final" class="hidden">
+                <p class="text-2xl font-bold text-netflix-accent" id="quiz-recommendation"></p>
+                <a href="/contact" class="inline-block mt-4 bg-netflix-accent text-white px-6 py-2 rounded-full">Demander ce service</a>
+            </div>
+        </div>
+
+        <!-- Comparateur poétique -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <div class="comparator-card bg-netflix-card p-6 rounded-2xl border border-white/5 text-center">
+                <i class="fas fa-smile text-4xl text-netflix-accent mb-3"></i>
+                <p class="text-white font-semibold">+200 sourires garantis</p>
+                <p class="text-netflix-muted text-sm">par projet livré</p>
+            </div>
+            <div class="comparator-card bg-netflix-card p-6 rounded-2xl border border-white/5 text-center">
+                <i class="fas fa-moon text-4xl text-netflix-accent mb-3"></i>
+                <p class="text-white font-semibold">30 nuits tranquilles</p>
+                <p class="text-netflix-muted text-sm">sans bug ni panne</p>
+            </div>
+            <div class="comparator-card bg-netflix-card p-6 rounded-2xl border border-white/5 text-center">
+                <i class="fas fa-coffee text-4xl text-netflix-accent mb-3"></i>
+                <p class="text-white font-semibold">500 cafés offerts</p>
+                <p class="text-netflix-muted text-sm">d'énergie créative</p>
+            </div>
+        </div>
+
+        <!-- NOUVEAU : Comparateur visuel -->
+        <div class="bg-netflix-card rounded-2xl p-8 text-center">
+            <h3 class="text-2xl font-bold text-white mb-4">Imaginez votre projet <span class="text-netflix-accent">terminé</span></h3>
+            <p class="text-netflix-muted mb-6">Faites glisser le curseur pour voir la transformation :</p>
+            <div class="flex items-center gap-4 mb-6 max-w-md mx-auto">
+                <span class="text-netflix-muted text-sm">Avant</span>
+                <input type="range" id="comparison-range" min="0" max="100" value="50" class="w-full">
+                <span class="text-netflix-muted text-sm">Après</span>
+            </div>
+            <div class="comparison-box" id="comparison-box">
+                <div class="comparison-message" id="comparison-message">
+                    <span class="text-netflix-muted">Votre projet actuel</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Attendre que le DOM soit complètement chargé
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // ====== SABLIER INVERSÉ ======
+        const slider = document.getElementById('sablier-slider');
+        const sand = document.getElementById('sablier-sand');
+        const label = document.getElementById('sablier-label');
+
+        if (slider && sand && label) {
+            slider.addEventListener('input', function() {
+                const val = this.value;
+                sand.style.height = val + '%';
+                label.textContent = '~' + (val * 2) + ' heures économisées';
+            });
+        }
+
+        // ====== QUIZ DE DÉCOUVERTE ======
+        const quizQuestion = document.getElementById('quiz-question');
+        const quizOptions = document.getElementById('quiz-options');
+        const quizStep = document.getElementById('quiz-step');
+        const quizContainer = document.getElementById('quiz-container');
+        const quizFinal = document.getElementById('quiz-final');
+        const quizRecommendation = document.getElementById('quiz-recommendation');
+
+        const quizData = {
+            step: 0,
+            answers: [],
+            questions: [
+                {
+                    text: "Quel est votre besoin principal ?",
+                    options: ["Me faire connaître", "Vendre en ligne", "Automatiser mes tâches"]
+                },
+                {
+                    text: "Quel est votre budget ?",
+                    options: ["Petit budget", "Budget moyen", "Budget confortable"]
+                }
+            ],
+            results: {
+                "Me faire connaître|Petit budget": "Site Vitrine",
+                "Me faire connaître|Budget moyen": "Application Web sur Mesure",
+                "Me faire connaître|Budget confortable": "Application Web sur Mesure",
+                "Vendre en ligne|Petit budget": "Site E-Commerce",
+                "Vendre en ligne|Budget moyen": "Site E-Commerce",
+                "Vendre en ligne|Budget confortable": "Application Web sur Mesure",
+                "Automatiser mes tâches|Petit budget": "Audit & Conseil",
+                "Automatiser mes tâches|Budget moyen": "Maintenance & Support",
+                "Automatiser mes tâches|Budget confortable": "Application Web sur Mesure"
+            }
+        };
+
+        function loadQuizStep() {
+            if (quizData.step < quizData.questions.length) {
+                const q = quizData.questions[quizData.step];
+                quizQuestion.textContent = q.text;
+                quizOptions.innerHTML = '';
+                q.options.forEach(function(opt) {
+                    const btn = document.createElement('button');
+                    btn.className = 'quiz-option-btn bg-netflix-secondary px-6 py-3 rounded-full text-white hover:bg-netflix-accent transition';
+                    btn.textContent = opt;
+                    btn.addEventListener('click', function() {
+                        quizData.answers.push(opt);
+                        quizData.step++;
+                        if (quizData.step < quizData.questions.length) {
+                            loadQuizStep();
+                        } else {
+                            showQuizResult();
+                        }
+                    });
+                    quizOptions.appendChild(btn);
+                });
+                quizStep.textContent = 'Étape ' + (quizData.step + 1) + '/' + quizData.questions.length;
+            }
+        }
+
+        function showQuizResult() {
+            const key = quizData.answers.join('|');
+            const service = quizData.results[key] || 'Application Web sur Mesure';
+            quizContainer.classList.add('hidden');
+            quizFinal.classList.remove('hidden');
+            quizRecommendation.textContent = '✨ ' + service + ' est votre service idéal !';
+        }
+
+        if (quizContainer && quizFinal) {
+            loadQuizStep();
+        }
+
+        // ====== COMPARATEUR VISUEL ======
+        const comparisonRange = document.getElementById('comparison-range');
+        const comparisonBox = document.getElementById('comparison-box');
+        const comparisonMessage = document.getElementById('comparison-message');
+
+        if (comparisonRange && comparisonBox && comparisonMessage) {
+            comparisonRange.addEventListener('input', function() {
+                const val = parseInt(this.value);
+                let message, bgColor, textColor;
+
+                if (val < 30) {
+                    message = '😕 Votre projet actuel... beaucoup de travail à faire.';
+                    bgColor = '#1a1a1a';
+                    textColor = '#B3B3B3';
+                } else if (val < 60) {
+                    message = '🚧 En cours de transformation... ça prend forme !';
+                    bgColor = '#2a1a1a';
+                    textColor = '#E50914';
+                } else if (val < 85) {
+                    message = '✨ Presque terminé ! Le résultat est impressionnant.';
+                    bgColor = '#1a2a1a';
+                    textColor = '#4CAF50';
+                } else {
+                    message = '🎉 Projet livré ! Vos clients sont conquis.';
+                    bgColor = '#E50914';
+                    textColor = '#FFFFFF';
+                }
+
+                comparisonMessage.innerHTML = '<span style="color:' + textColor + '">' + message + '</span>';
+                comparisonBox.style.background = bgColor;
+                comparisonBox.style.borderColor = textColor;
+            });
+        }
+
+    });
+</script>
+{% endblock %}

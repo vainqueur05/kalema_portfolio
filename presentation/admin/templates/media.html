@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Médias – Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { 'netflix-dark': '#0A0A0A', 'netflix-card': '#141414', 'netflix-secondary': '#1E1E1E', 'netflix-accent': '#E50914' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-netflix-dark text-white flex">
+    <aside class="w-72 bg-netflix-card min-h-screen p-6 border-r border-white/5 flex flex-col">
+        <a href="/admin" class="text-2xl font-bold text-netflix-accent mb-10">VK<span class="text-white">.</span></a>
+        <nav class="flex-1 space-y-1 text-sm">
+            <a href="/admin" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-tachometer-alt w-5"></i> Dashboard</a>
+            <a href="/admin/media" class="flex items-center gap-3 py-3 px-4 rounded-xl bg-netflix-accent text-white"><i class="fas fa-image w-5"></i> Médias</a>
+        </nav>
+        <div class="pt-4 border-t border-white/5">
+            <a href="/admin/logout" class="flex items-center gap-3 py-3 px-4 rounded-xl text-red-400 hover:bg-netflix-secondary text-sm"><i class="fas fa-sign-out-alt w-5"></i> Déconnexion</a>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-8 overflow-y-auto">
+        <h1 class="text-4xl font-bold mb-2">Galerie <span class="text-netflix-accent">média</span></h1>
+        <p class="text-gray-400 mb-8">{{ files|length }} fichier(s)</p>
+
+        <!-- Zone d'upload -->
+        <form method="POST" action="/admin/media/upload" enctype="multipart/form-data" class="mb-10 bg-netflix-card p-8 rounded-2xl border border-white/5">
+            <div class="border-2 border-dashed border-white/10 rounded-xl p-8 text-center hover:border-netflix-accent/50 transition cursor-pointer" id="media-drop-zone">
+                <i class="fas fa-cloud-upload-alt text-5xl text-gray-500 mb-4"></i>
+                <p class="text-gray-400 text-lg">Glissez-déposez vos images ici</p>
+                <p class="text-gray-600 text-sm mt-2">ou cliquez pour parcourir</p>
+                <input type="file" name="file" accept="image/*" class="hidden" id="media-file-input">
+            </div>
+            <div id="media-preview" class="mt-4 hidden">
+                <p class="text-sm text-gray-400 mb-2">Aperçu :</p>
+                <img src="" class="w-32 h-32 object-cover rounded-xl border border-white/5" id="media-preview-img">
+            </div>
+            <button type="submit" class="mt-4 bg-netflix-accent text-white px-6 py-3 rounded-xl font-semibold hover:bg-red-700 transition flex items-center gap-2">
+                <i class="fas fa-upload"></i> Envoyer
+            </button>
+        </form>
+
+        <!-- Grille d'images -->
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {% for file in files %}
+            <div class="bg-netflix-card rounded-xl overflow-hidden border border-white/5 group">
+                <img src="/static/uploads/{{ file }}" class="w-full h-32 object-cover group-hover:scale-105 transition-transform">
+                <div class="p-2 flex items-center justify-between">
+                    <p class="text-xs text-gray-400 truncate flex-1">{{ file }}</p>
+                    <button class="text-gray-500 hover:text-red-400 transition" onclick="copyUrl('/static/uploads/{{ file }}')" title="Copier l'URL">
+                        <i class="fas fa-copy text-xs"></i>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <script>
+        const dropZone = document.getElementById('media-drop-zone');
+        const fileInput = document.getElementById('media-file-input');
+        const preview = document.getElementById('media-preview');
+        const previewImg = document.getElementById('media-preview-img');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-netflix-accent'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-netflix-accent'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-netflix-accent');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                fileInput.files = e.dataTransfer.files;
+                showPreview(file);
+            }
+        });
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files[0]) showPreview(fileInput.files[0]);
+        });
+        function showPreview(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImg.src = e.target.result;
+                preview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+        function copyUrl(url) {
+            navigator.clipboard.writeText(url);
+            alert('URL copiée : ' + url);
+        }
+    </script>
+</body>
+</html>

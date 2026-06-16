@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages – Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { 'netflix-dark': '#0A0A0A', 'netflix-card': '#141414', 'netflix-secondary': '#1E1E1E', 'netflix-accent': '#E50914' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-netflix-dark text-white flex">
+    <aside class="w-72 bg-netflix-card min-h-screen p-6 border-r border-white/5 flex flex-col">
+        <a href="/admin" class="text-2xl font-bold text-netflix-accent mb-10">VK<span class="text-white">.</span></a>
+        <nav class="flex-1 space-y-1 text-sm">
+            <a href="/admin" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-tachometer-alt w-5"></i> Dashboard</a>
+            <a href="/admin/contacts" class="flex items-center gap-3 py-3 px-4 rounded-xl bg-netflix-accent text-white"><i class="fas fa-envelope w-5"></i> Messages</a>
+        </nav>
+        <div class="pt-4 border-t border-white/5">
+            <a href="/admin/logout" class="flex items-center gap-3 py-3 px-4 rounded-xl text-red-400 hover:bg-netflix-secondary text-sm"><i class="fas fa-sign-out-alt w-5"></i> Déconnexion</a>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-8 overflow-y-auto">
+        <h1 class="text-4xl font-bold mb-2">Messages reçus</h1>
+        <p class="text-gray-400 mb-8">{{ contacts|length }} message(s)</p>
+
+        <div class="grid gap-4">
+            {% for c in contacts %}
+            <a href="/admin/contacts/{{ c.id }}" class="bg-netflix-card p-6 rounded-2xl border border-white/5 flex justify-between items-center hover:border-netflix-accent/50 transition group">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-full bg-netflix-secondary flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user text-gray-400"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-white group-hover:text-netflix-accent transition">{{ c.nom }}</p>
+                        <p class="text-sm text-gray-500">{{ c.email }}</p>
+                        <p class="text-sm text-gray-400 mt-1">{{ c.message[:80] }}...</p>
+                        <span class="text-xs px-2 py-0.5 rounded-full font-medium {% if c.statut == 'Nouveau' %}bg-red-600/20 text-red-400{% elif c.statut == 'Lu' %}bg-yellow-600/20 text-yellow-400{% else %}bg-green-600/20 text-green-400{% endif %}">
+                            {{ c.statut }}
+                        </span>
+                    </div>
+                </div>
+                <div class="text-netflix-accent group-hover:translate-x-1 transition-transform">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </main>
+</body>
+</html>

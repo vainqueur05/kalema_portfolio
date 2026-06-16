@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte de chaleur – Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { 'netflix-dark': '#0A0A0A', 'netflix-card': '#141414', 'netflix-secondary': '#1E1E1E', 'netflix-accent': '#E50914' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .heatmap-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 500px;
+            background: #0A0A0A;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin: 0 auto;
+        }
+        .heatmap-point {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(229, 9, 20, 0.6);
+            pointer-events: none;
+            animation: pulse-heat 2s infinite;
+        }
+        @keyframes pulse-heat {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.5); opacity: 0.2; }
+        }
+        .page-selector {
+            transition: all 0.2s;
+        }
+        .page-selector:hover, .page-selector.active {
+            background: rgba(229,9,20,0.2);
+            border-color: #E50914;
+        }
+    </style>
+</head>
+<body class="bg-netflix-dark text-white flex">
+    <!-- Sidebar -->
+    <aside class="w-72 bg-netflix-card min-h-screen p-6 border-r border-white/5 flex flex-col">
+        <a href="/admin" class="text-2xl font-bold text-netflix-accent mb-10">VK<span class="text-white">.</span></a>
+        <nav class="flex-1 space-y-1 text-sm">
+            <a href="/admin" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-tachometer-alt w-5"></i> Dashboard</a>
+            <a href="/admin/profil" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-user w-5"></i> Profil</a>
+            <a href="/admin/projets" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-folder w-5"></i> Projets</a>
+            <a href="/admin/services" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-cogs w-5"></i> Services</a>
+            <a href="/admin/temoignages" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-star w-5"></i> Témoignages</a>
+            <a href="/admin/about" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-info-circle w-5"></i> À propos</a>
+            <a href="/admin/liens" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-link w-5"></i> Liens</a>
+            <a href="/admin/contacts" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-envelope w-5"></i> Messages</a>
+            <a href="/admin/visites" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-chart-line w-5"></i> Visites</a>
+            <a href="/admin/heatmap" class="flex items-center gap-3 py-3 px-4 rounded-xl bg-netflix-accent text-white"><i class="fas fa-fire w-5"></i> Heatmap</a>
+            <a href="/admin/snapshots" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-save w-5"></i> Sauvegardes</a>
+            <a href="/admin/media" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-image w-5"></i> Médias</a>
+            <a href="/admin/maintenance" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-tools w-5"></i> Maintenance</a>
+        </nav>
+        <div class="pt-4 border-t border-white/5 space-y-1">
+            <a href="/" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary text-sm"><i class="fas fa-eye w-5"></i> Voir le site</a>
+            <a href="/admin/logout" class="flex items-center gap-3 py-3 px-4 rounded-xl text-red-400 hover:bg-netflix-secondary text-sm"><i class="fas fa-sign-out-alt w-5"></i> Déconnexion</a>
+        </div>
+    </aside>
+
+    <!-- Contenu -->
+    <main class="flex-1 p-8 overflow-y-auto">
+        <h1 class="text-4xl font-bold mb-2">Carte de <span class="text-netflix-accent">chaleur</span></h1>
+        <p class="text-gray-400 mb-8">Visualisez où cliquent vos visiteurs.</p>
+
+        <!-- Sélecteur de page -->
+        <div class="flex gap-3 mb-8 flex-wrap">
+            <button class="page-selector active px-4 py-2 rounded-xl border border-netflix-accent text-netflix-accent text-sm" data-page="/">Page d'accueil</button>
+            <button class="page-selector px-4 py-2 rounded-xl border border-white/10 text-gray-400 text-sm" data-page="/services">Services</button>
+            <button class="page-selector px-4 py-2 rounded-xl border border-white/10 text-gray-400 text-sm" data-page="/blog">Blog</button>
+            <button class="page-selector px-4 py-2 rounded-xl border border-white/10 text-gray-400 text-sm" data-page="/contact">Contact</button>
+        </div>
+
+        <!-- Zone de chaleur -->
+        <div class="heatmap-container" id="heatmap-zone">
+            <p class="absolute inset-0 flex items-center justify-center text-gray-600 text-lg">
+                <i class="fas fa-mouse-pointer mr-2"></i> Les données de clics apparaîtront ici
+            </p>
+        </div>
+
+        <!-- Légende -->
+        <div class="flex items-center gap-6 mt-6 justify-center">
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-blue-400 opacity-50"></span> Peu</div>
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-yellow-400 opacity-60"></span> Moyen</div>
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-netflix-accent opacity-80"></span> Beaucoup</div>
+        </div>
+
+        <!-- Graphique des clics par page -->
+        <div class="bg-netflix-card p-6 rounded-2xl border border-white/5 mt-8">
+            <h3 class="text-lg font-semibold text-white mb-4">Clics par page (30 jours)</h3>
+            <canvas id="clicksChart" height="100"></canvas>
+        </div>
+    </main>
+
+    <script>
+        // Sélecteur de page
+        document.querySelectorAll('.page-selector').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.page-selector').forEach(b => b.classList.remove('active', 'border-netflix-accent', 'text-netflix-accent'));
+                this.classList.add('active', 'border-netflix-accent', 'text-netflix-accent');
+                loadHeatmap(this.dataset.page);
+            });
+        });
+
+        // Simulation de heatmap
+        function loadHeatmap(page) {
+            const zone = document.getElementById('heatmap-zone');
+            zone.innerHTML = '';
+            const points = Math.floor(Math.random() * 30) + 10;
+            for (let i = 0; i < points; i++) {
+                const point = document.createElement('div');
+                point.className = 'heatmap-point';
+                point.style.left = Math.random() * 90 + '%';
+                point.style.top = Math.random() * 90 + '%';
+                point.style.width = (Math.random() * 30 + 10) + 'px';
+                point.style.height = point.style.width;
+                point.style.background = ['rgba(59,130,246,0.5)', 'rgba(234,179,8,0.6)', 'rgba(229,9,20,0.7)'][Math.floor(Math.random() * 3)];
+                point.style.animationDelay = Math.random() * 2 + 's';
+                zone.appendChild(point);
+            }
+        }
+        loadHeatmap('/');
+
+        // Graphique clics
+        const ctx = document.getElementById('clicksChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Accueil', 'Services', 'Blog', 'Contact', 'À propos'],
+                datasets: [{
+                    label: 'Clics',
+                    data: [450, 230, 180, 120, 90],
+                    backgroundColor: '#E50914',
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { color: '#B3B3B3' } },
+                    x: { ticks: { color: '#B3B3B3' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

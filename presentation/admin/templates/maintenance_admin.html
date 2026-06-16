@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintenance – Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { 'netflix-dark': '#0A0A0A', 'netflix-card': '#141414', 'netflix-secondary': '#1E1E1E', 'netflix-accent': '#E50914' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-netflix-dark text-white flex">
+    <aside class="w-72 bg-netflix-card min-h-screen p-6 border-r border-white/5 flex flex-col">
+        <a href="/admin" class="text-2xl font-bold text-netflix-accent mb-10">VK<span class="text-white">.</span></a>
+        <nav class="flex-1 space-y-1 text-sm">
+            <a href="/admin" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-tachometer-alt w-5"></i> Dashboard</a>
+            <a href="/admin/maintenance" class="flex items-center gap-3 py-3 px-4 rounded-xl bg-netflix-accent text-white"><i class="fas fa-tools w-5"></i> Maintenance</a>
+        </nav>
+        <div class="pt-4 border-t border-white/5">
+            <a href="/" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary text-sm"><i class="fas fa-eye w-5"></i> Voir le site</a>
+            <a href="/admin/logout" class="flex items-center gap-3 py-3 px-4 rounded-xl text-red-400 hover:bg-netflix-secondary text-sm"><i class="fas fa-sign-out-alt w-5"></i> Déconnexion</a>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex items-center justify-center p-8">
+        <div class="text-center max-w-lg">
+            <div class="mb-8">
+                {% if maintenance_actif %}
+                <div class="w-24 h-24 mx-auto bg-red-900/20 rounded-full flex items-center justify-center animate-pulse">
+                    <i class="fas fa-tools text-6xl text-netflix-accent"></i>
+                </div>
+                {% else %}
+                <div class="w-24 h-24 mx-auto bg-green-900/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-check-circle text-6xl text-green-400"></i>
+                </div>
+                {% endif %}
+            </div>
+            <h1 class="text-4xl font-bold mb-4">Mode <span class="text-netflix-accent">maintenance</span></h1>
+            <p class="text-gray-400 mb-8 text-lg">
+                Le site est actuellement <span class="{% if maintenance_actif %}text-red-400 font-semibold{% else %}text-green-400 font-semibold{% endif %}">{{ 'en maintenance' if maintenance_actif else 'en ligne' }}</span>.
+            </p>
+            <form method="POST">
+                <button type="submit" class="{% if maintenance_actif %}bg-green-600 hover:bg-green-700{% else %}bg-netflix-accent hover:bg-red-700{% endif %} text-white px-8 py-4 rounded-xl font-semibold text-lg transition flex items-center gap-2 mx-auto">
+                    <i class="fas {% if maintenance_actif %}fa-play{% else %}fa-pause{% endif %}"></i>
+                    {% if maintenance_actif %}Désactiver la maintenance{% else %}Activer la maintenance{% endif %}
+                </button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

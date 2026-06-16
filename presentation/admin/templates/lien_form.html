@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ 'Modifier' if lien else 'Ajouter' }} un lien – Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { 'netflix-dark': '#0A0A0A', 'netflix-card': '#141414', 'netflix-secondary': '#1E1E1E', 'netflix-accent': '#E50914' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-netflix-dark text-white flex">
+    <aside class="w-72 bg-netflix-card min-h-screen p-6 border-r border-white/5 flex flex-col">
+        <a href="/admin" class="text-2xl font-bold text-netflix-accent mb-10">VK<span class="text-white">.</span></a>
+        <nav class="flex-1 space-y-1 text-sm">
+            <a href="/admin" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-tachometer-alt w-5"></i> Dashboard</a>
+            <a href="/admin/liens" class="flex items-center gap-3 py-3 px-4 rounded-xl bg-netflix-accent text-white"><i class="fas fa-link w-5"></i> Liens</a>
+        </nav>
+        <div class="pt-4 border-t border-white/5">
+            <a href="/admin/logout" class="flex items-center gap-3 py-3 px-4 rounded-xl text-red-400 hover:bg-netflix-secondary text-sm"><i class="fas fa-sign-out-alt w-5"></i> Déconnexion</a>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-8 overflow-y-auto">
+        <div class="max-w-2xl">
+            <h1 class="text-4xl font-bold mb-2">{{ 'Modifier' if lien else 'Ajouter' }} un <span class="text-netflix-accent">lien</span></h1>
+            <p class="text-gray-400 mb-8">Ces liens apparaîtront sur la page Contact publique.</p>
+
+            {% if error %}
+            <div class="bg-red-900/30 border border-red-500 text-red-200 p-4 rounded-2xl mb-8 flex items-center gap-3">
+                <i class="fas fa-exclamation-triangle"></i> {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" class="space-y-6">
+                <div class="bg-netflix-card p-6 rounded-2xl border border-white/5 space-y-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2 font-medium">Nom du lien</label>
+                        <input type="text" name="nom" placeholder="Ex: WhatsApp, LinkedIn..." value="{{ lien.nom if lien else '' }}" class="w-full bg-netflix-dark border border-white/10 rounded-xl px-5 py-3.5 text-white focus:border-netflix-accent focus:outline-none transition" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2 font-medium">URL</label>
+                        <input type="text" name="url" placeholder="https://wa.me/... ou mailto:..." value="{{ lien.url if lien else '' }}" class="w-full bg-netflix-dark border border-white/10 rounded-xl px-5 py-3.5 text-white focus:border-netflix-accent focus:outline-none transition" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2 font-medium">Icône Font Awesome</label>
+                        <input type="text" name="icone" placeholder="fa-brands fa-whatsapp" value="{{ lien.icone if lien else '' }}" class="w-full bg-netflix-dark border border-white/10 rounded-xl px-5 py-3.5 text-white focus:border-netflix-accent focus:outline-none transition" required>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="actif" value="true" {% if lien and lien.actif %}checked{% endif %} class="w-4 h-4 accent-netflix-accent">
+                            <span class="text-sm">Actif</span>
+                        </label>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Ordre</label>
+                            <input type="number" name="ordre" value="{{ lien.ordre if lien else '0' }}" class="w-20 bg-netflix-dark border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:border-netflix-accent focus:outline-none transition">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="bg-netflix-accent text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-red-700 transition flex items-center gap-2">
+                    <i class="fas fa-check"></i> Enregistrer
+                </button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

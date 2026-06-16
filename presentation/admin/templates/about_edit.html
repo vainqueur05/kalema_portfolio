@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier la page À propos – Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { 'netflix-dark': '#0A0A0A', 'netflix-card': '#141414', 'netflix-secondary': '#1E1E1E', 'netflix-accent': '#E50914' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-netflix-dark text-white flex">
+    <!-- Sidebar -->
+    <aside class="w-72 bg-netflix-card min-h-screen p-6 border-r border-white/5 flex flex-col">
+        <a href="/admin" class="text-2xl font-bold text-netflix-accent mb-10">VK<span class="text-white">.</span></a>
+        <nav class="flex-1 space-y-1 text-sm">
+            <a href="/admin" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-tachometer-alt w-5"></i> Dashboard</a>
+            <a href="/admin/profil" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-user w-5"></i> Profil</a>
+            <a href="/admin/projets" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-folder w-5"></i> Projets</a>
+            <a href="/admin/services" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-cogs w-5"></i> Services</a>
+            <a href="/admin/temoignages" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-star w-5"></i> Témoignages</a>
+            <a href="/admin/about" class="flex items-center gap-3 py-3 px-4 rounded-xl bg-netflix-accent text-white"><i class="fas fa-info-circle w-5"></i> À propos</a>
+            <a href="/admin/liens" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-link w-5"></i> Liens</a>
+            <a href="/admin/contacts" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-envelope w-5"></i> Messages</a>
+            <a href="/admin/visites" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-chart-line w-5"></i> Visites</a>
+            <a href="/admin/heatmap" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-fire w-5"></i> Heatmap</a>
+            <a href="/admin/snapshots" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-save w-5"></i> Sauvegardes</a>
+            <a href="/admin/media" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-image w-5"></i> Médias</a>
+            <a href="/admin/maintenance" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-tools w-5"></i> Maintenance</a>
+        </nav>
+        <div class="pt-4 border-t border-white/5 space-y-1">
+            <a href="/" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary text-sm"><i class="fas fa-eye w-5"></i> Voir le site</a>
+            <a href="/admin/logout" class="flex items-center gap-3 py-3 px-4 rounded-xl text-red-400 hover:bg-netflix-secondary text-sm"><i class="fas fa-sign-out-alt w-5"></i> Déconnexion</a>
+        </div>
+    </aside>
+
+    <!-- Contenu -->
+    <main class="flex-1 p-8 overflow-y-auto">
+        <div class="max-w-4xl">
+            <h1 class="text-4xl font-bold mb-2">Contenu de la page <span class="text-netflix-accent">À propos</span></h1>
+            <p class="text-gray-400 mb-8">Ce contenu sera affiché sur la page publique /a-propos</p>
+
+            {% if error %}
+            <div class="bg-red-900/30 border border-red-500 text-red-200 p-4 rounded-2xl mb-8 flex items-center gap-3">
+                <i class="fas fa-exclamation-triangle"></i> {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" class="space-y-6">
+                <div class="bg-netflix-card p-6 rounded-2xl border border-white/5">
+                    <textarea name="contenu" rows="20" class="w-full bg-netflix-dark border border-white/10 rounded-xl px-5 py-4 text-white font-mono text-sm focus:border-netflix-accent focus:outline-none transition" placeholder="Écrivez votre contenu ici... (Markdown ou HTML accepté)">{{ about.contenu if about else '' }}</textarea>
+                    <p class="text-sm text-gray-500 mt-3 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-netflix-accent"></i> Vous pouvez utiliser du <strong>Markdown</strong> ou du <strong>HTML</strong>.
+                    </p>
+                </div>
+                <button type="submit" class="bg-netflix-accent text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-red-700 transition flex items-center gap-2">
+                    <i class="fas fa-check"></i> Enregistrer les modifications
+                </button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

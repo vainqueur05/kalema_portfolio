@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+dist/
+build/
+*.egg-info/
+
+# Environnement virtuel
+venv/
+env/
+.venv/
+
+# Base de données
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploads (seront recréés sur le serveur)
+static/uploads/*.jpg
+static/uploads/*.png
+static/uploads/*.webp
+
+# Variables d'environnement
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cache
+*.log
+.mypy_cache/
+.pytest_cache/

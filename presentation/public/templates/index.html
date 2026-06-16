@@ -1,0 +1,535 @@
+{% extends "base.html" %}
+
+{% block title %}Bridge Afrika | Accueil{% endblock %}
+{% block meta_description %}Vainqueur Kalema – Développeur Fullstack Web.{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+    .stat-number { font-size:3rem; font-weight:900; background:linear-gradient(135deg,#E50914,#ff4d4d); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    /* Hero en premier dans le snap */
+    #hero { scroll-snap-align: start; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="snap-container">
+
+<!-- ========== HERO DEUX COLONNES (HORS SNAP) ========== -->
+<section id="hero" class="hero-section">
+    <canvas id="hero-particles" class="hero-canvas"></canvas>
+    <div class="hero-overlay"></div>
+
+    <div class="floating-bubbles" id="floating-bubbles">
+        <div class="bubble bubble-python"><i class="fab fa-python"></i><span>Python</span></div>
+        <div class="bubble bubble-fastapi"><i class="fas fa-bolt"></i><span>FastAPI</span></div>
+        <div class="bubble bubble-flask"><i class="fas fa-flask"></i><span>Flask</span></div>
+    </div>
+
+    <div class="hero-container">
+        <div class="hero-col hero-col-left">
+            <div class="photo-wrapper" id="photo-wrapper">
+                <div class="hypno-rings" id="hypno-rings">
+                    <div class="hypno-ring"></div>
+                    <div class="hypno-ring" style="animation-delay: 0.6s;"></div>
+                    <div class="hypno-ring" style="animation-delay: 1.2s;"></div>
+                </div>
+                <div class="sos-signal" id="sos-signal"><div class="sos-arrow">↓</div><span class="sos-text">Découvrez</span></div>
+                <div class="silhouette-container" id="silhouette-container">
+                    <img src="{{ profil.photo_url or '/static/img/default-avatar.jpg' }}" alt="{{ profil.nom_complet or 'Vainqueur Kalema' }}" class="silhouette-photo" id="profile-photo">
+                    <div class="mona-eyes" id="mona-eyes"><div class="mona-eye mona-eye-left"></div><div class="mona-eye mona-eye-right"></div></div>
+                    <div class="premium-badge"><i class="fas fa-crown"></i><span>Fullstack</span></div>
+                    <div class="availability-badge"><span class="dot"></span>Disponible</div>
+                </div>
+                <div class="photo-variants">
+                    <button class="variant-btn active" data-variant="variant-1"><span class="variant-dot"></span></button>
+                    <button class="variant-btn" data-variant="variant-2"><span class="variant-dot"></span></button>
+                    <button class="variant-btn" data-variant="variant-3"><span class="variant-dot"></span></button>
+                </div>
+            </div>
+        </div>
+        <div class="hero-col hero-col-right">
+            <div class="hero-content">
+                <div class="status-badge"><span class="status-dot"></span><span class="status-text">Ouvert aux projets</span></div>
+                <p id="greeting" class="hero-greeting"></p>
+                <h1 class="hero-title glitch-text">{{ profil.nom_complet or 'Vainqueur Kalema' }}</h1>
+                <div class="hero-role-wrapper"><p class="hero-role" id="dynamic-role">{{ profil.titre or 'Développeur Fullstack Web' }}</p><span class="role-cursor">|</span></div>
+                <p id="dynamic-tagline" class="hero-tagline">Je transforme vos idées en expériences digitales inoubliables.</p>
+                <div class="hero-location" id="location"><i class="fas fa-map-marker-alt"></i><span>Détection en cours...</span></div>
+                <div class="hero-stats">
+                    <div class="stat-item"><span class="stat-number" data-count="2">0</span><span class="stat-label">Années d'expérience</span></div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item"><span class="stat-number" data-count="5">0</span><span class="stat-label">Projets livrés</span></div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item"><span class="stat-number" data-count="5">0</span><span class="stat-label">Clients satisfaits</span></div>
+                </div>
+                <div class="hero-cta">
+                    <a href="/contact" class="cta-primary" id="cta-button"><i class="fas fa-comments"></i>Discutons de votre projet<i class="fas fa-arrow-right"></i></a>
+                    <a href="#machines" class="cta-secondary"><i class="fas fa-eye"></i>Voir mes projets</a>
+                </div>
+                <div class="hero-social">
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                </div>
+                <div class="scroll-indicator"><span>Déroulez</span><i class="fas fa-chevron-down"></i></div>
+            </div>
+        </div>
+    </div>
+</section>
+    <!-- ========== 2. POURQUOI MOI (EBOLA) ========== -->
+    <section id="pourquoi-moi" class="snap-section bg-netflix-card">
+        <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 kinetic-title">Ce que <span class="text-netflix-accent">VOUS</span> gagnez</h2>
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div><i class="fas fa-bolt text-5xl text-netflix-accent mb-4"></i><p class="font-semibold text-white text-lg">Vitesse</p><p class="text-netflix-muted text-sm mt-2">Votre MVP livré en 14 jours.</p></div>
+            <div><i class="fas fa-mobile-alt text-5xl text-netflix-accent mb-4"></i><p class="font-semibold text-white text-lg">Accessibilité</p><p class="text-netflix-muted text-sm mt-2">Vos clients sont sur WhatsApp. Votre solution aussi.</p></div>
+            <div><i class="fas fa-shield-alt text-5xl text-netflix-accent mb-4"></i><p class="font-semibold text-white text-lg">Sécurité</p><p class="text-netflix-muted text-sm mt-2">Des systèmes qui tournent 24/7.</p></div>
+        </div>
+    </section>
+
+    <!-- ========== 3. IMPACT (PAS) ========== -->
+    <section id="impact" class="snap-section bg-netflix-dark">
+        <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 kinetic-title">Avant / Après <span class="text-netflix-accent">Bridge Afrika</span></h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto text-center mb-16">
+            <div><p class="stat-number" data-target="12" data-suffix="+">0</p><p class="text-netflix-muted mt-2">Projets livrés</p></div>
+            <div><p class="stat-number" data-target="8">0</p><p class="text-netflix-muted mt-2">Clients satisfaits</p></div>
+            <div><p class="stat-number" data-target="50" data-suffix="k">0</p><p class="text-netflix-muted mt-2">Lignes de code</p></div>
+            <div><p class="stat-number" data-target="300" data-suffix="%">0</p><p class="text-netflix-muted mt-2">Croissance</p></div>
+        </div>
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-netflix-card p-6 rounded-2xl border border-white/5"><p class="text-netflix-muted text-sm mb-2"><i class="fas fa-times-circle mr-1"></i> AVANT</p><p class="text-white italic">"Aucune présence en ligne, clients perdus."</p></div>
+            <div class="bg-netflix-accent/10 p-6 rounded-2xl border border-netflix-accent/30"><p class="text-netflix-accent text-sm mb-2"><i class="fas fa-check-circle mr-1"></i> APRÈS</p><p class="text-white italic">"Site professionnel, +300% de trafic."</p></div>
+        </div>
+    </section>
+
+    <!-- ========== 4. TÉMOIGNAGES (Preuve sociale) ========== -->
+    <section id="cri" class="snap-section bg-netflix-card">
+        <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 kinetic-title">Ils m'ont fait <span class="text-netflix-accent">confiance</span></h2>
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for tem in temoignages[:3] %}
+            <div class="card-project p-6 text-center">
+                {% if tem.photo_url %}<img src="{{ tem.photo_url }}" alt="{{ tem.nom }}" class="w-16 h-16 rounded-full mx-auto mb-4 border-2 border-netflix-accent">{% endif %}
+                <p class="text-netflix-muted italic mb-4">"{{ tem.texte[:150] }}..."</p>
+                <p class="font-bold text-white">{{ tem.nom }}</p>
+                {% if tem.entreprise %}<p class="text-sm text-netflix-muted">{{ tem.entreprise }}</p>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- ========== 5. TECHNOLOGIE INVISIBLE ========== -->
+    <section id="revolution" class="snap-section bg-netflix-dark">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl md:text-5xl font-bold mb-6 kinetic-title">Technologie <span class="text-netflix-accent">invisible</span></h2>
+            <p class="text-lg text-netflix-muted mb-8">Du feature phone au smartphone, vos utilisateurs méritent le meilleur.</p>
+            <div class="flex justify-center gap-8 items-center">
+                <i class="fas fa-mobile-alt text-6xl text-netflix-accent"></i>
+                <i class="fas fa-arrow-right text-4xl text-netflix-muted"></i>
+                <i class="fas fa-mobile-alt text-8xl text-white"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 6. PROJETS (coverflow + filtres) ========== -->
+    <section id="machines" class="snap-section bg-gradient-to-b from-netflix-card to-netflix-dark">
+        <h2 class="text-4xl md:text-6xl font-extrabold text-center mb-4 kinetic-title">Mes <span class="text-netflix-accent">créations</span></h2>
+        <div class="flex justify-center gap-4 mb-8">
+            <button class="filter-btn text-sm bg-netflix-secondary px-4 py-2 rounded-full" data-filter="all"><i class="fas fa-th mr-2"></i> Tout</button>
+            <button class="filter-btn text-sm bg-netflix-secondary px-4 py-2 rounded-full" data-filter="web"><i class="fas fa-globe mr-2"></i> Web</button>
+            <button class="filter-btn text-sm bg-netflix-secondary px-4 py-2 rounded-full" data-filter="mobile"><i class="fas fa-mobile-alt mr-2"></i> Mobile</button>
+        </div>
+        {% if projets %}
+        <div class="swiper mySwiper w-full max-w-5xl">
+            <div class="swiper-wrapper">
+                {% for projet in projets %}
+                <div class="swiper-slide" data-category="{% if 'mobile' in projet.description_courte.lower() %}mobile{% else %}web{% endif %}">
+                    <div class="card-project" data-slug="{{ projet.slug }}">
+                        {% if loop.first %}<div class="popular-badge"><i class="fas fa-crown mr-1"></i> Populaire</div>{% endif %}
+                        <div class="project-img-wrapper">
+                            {% if projet.image_url %}
+                            <img src="{{ projet.image_url }}" alt="{{ projet.titre }}" loading="lazy">
+                            {% else %}
+                            <div style="background: linear-gradient(135deg, #1E1E1E, #E50914); height:100%; display:flex; align-items:center; justify-content:center;"><i class="fas fa-code text-6xl text-white/30"></i></div>
+                            {% endif %}
+                            <div class="project-img-overlay"></div>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">{{ projet.titre }}</h3>
+                            <p class="project-excerpt">{{ projet.description_courte[:120] }}...</p>
+                            <div class="difficulty flex gap-1 text-sm mt-2"><i class="fas fa-cogs mr-1 text-netflix-muted"></i> Complexité : {% for _ in range(4) %}<i class="fas fa-star difficulty-star"></i>{% endfor %}<i class="far fa-star text-gray-400"></i></div>
+                            <div class="reactions mt-2">
+                                <button class="reaction-btn"><i class="fas fa-fire"></i> <span class="reaction-count">0</span></button>
+                                <button class="reaction-btn"><i class="fas fa-heart"></i> <span class="reaction-count">0</span></button>
+                                <button class="reaction-btn"><i class="fas fa-rocket"></i> <span class="reaction-count">0</span></button>
+                            </div>
+                            <a href="/projet/{{ projet.slug }}" class="project-btn mt-3"><i class="fas fa-search mr-2"></i> Explorer <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
+        {% else %}
+        <p class="text-netflix-muted">Aucun projet pour le moment.</p>
+        {% endif %}
+    </section>
+
+    <!-- ========== 7. LOUPE SUR MON PROCESS ========== -->
+    <section id="loupe-process" class="snap-section bg-netflix-card">
+        <h2 class="text-3xl md:text-5xl font-bold text-center mb-8 kinetic-title">Dans les <span class="text-netflix-accent">coulisses</span></h2>
+        <div class="max-w-4xl mx-auto text-center relative">
+            <p class="text-netflix-muted mb-6">Passez la souris sur les zones pour découvrir comment je travaille.</p>
+            <div class="frise-container relative w-full h-64 bg-netflix-dark rounded-2xl overflow-hidden border border-white/5">
+                <div class="frise-zone zone-1" data-detail="Analyse des besoins : questionnaire détaillé + entretien."></div>
+                <div class="frise-zone zone-2" data-detail="Maquettage rapide : wireframes sous Figma."></div>
+                <div class="frise-zone zone-3" data-detail="Développement itératif : sprints de 1 semaine."></div>
+                <div class="frise-zone zone-4" data-detail="Tests & validation : recette utilisateur."></div>
+                <div class="frise-zone zone-5" data-detail="Déploiement & suivi : maintenance évolutive."></div>
+            </div>
+            <div class="loupe-detail mt-4 text-netflix-muted text-sm italic" id="loupe-text">Survolez une zone pour voir le détail.</div>
+        </div>
+    </section>
+
+    <!-- ========== 8. COMPTEUR DE TEMPS SAUVÉ ========== -->
+    <section id="temps-sauve" class="snap-section bg-netflix-dark">
+        <div class="max-w-3xl mx-auto text-center">
+            <h2 class="text-3xl md:text-5xl font-bold mb-8 kinetic-title">Heures <span class="text-netflix-accent">économisées</span> pour mes clients</h2>
+            <p class="text-netflix-muted mb-4">Faites glisser le curseur pour voir l'impact concret :</p>
+            <input type="range" id="time-slider" min="0" max="500" value="0" class="w-full h-2 bg-netflix-secondary rounded-full appearance-none cursor-pointer slider-thumb">
+            <div class="mt-4 text-2xl font-bold text-netflix-accent" id="time-display">0 heures</div>
+            <div class="mt-2 text-netflix-muted text-sm italic" id="time-anecdote">Déplacez le curseur pour afficher une anecdote.</div>
+        </div>
+    </section>
+
+    <!-- ========== 9. CARTE À GRATTER DES ÉCHECS ========== -->
+    <section id="echecs" class="snap-section bg-netflix-card">
+        <h2 class="text-3xl md:text-5xl font-bold text-center mb-8 kinetic-title">Mes <span class="text-netflix-accent">échecs utiles</span></h2>
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="scratch-card bg-netflix-dark p-6 rounded-2xl text-center cursor-pointer" data-message="J'ai sous‑estimé les tests de charge → depuis, j'ajoute toujours un monitoring.">
+                <i class="fas fa-scratchpad text-4xl text-netflix-muted mb-2"></i>
+                <p class="text-white">Gratter pour découvrir</p>
+            </div>
+            <div class="scratch-card bg-netflix-dark p-6 rounded-2xl text-center cursor-pointer" data-message="J'ai livré un projet sans sauvegardes → maintenant, backup automatique quotidien.">
+                <i class="fas fa-scratchpad text-4xl text-netflix-muted mb-2"></i>
+                <p class="text-white">Gratter pour découvrir</p>
+            </div>
+            <div class="scratch-card bg-netflix-dark p-6 rounded-2xl text-center cursor-pointer" data-message="J'ai négligé la communication client → aujourd'hui, j'envoie un rapport hebdo.">
+                <i class="fas fa-scratchpad text-4xl text-netflix-muted mb-2"></i>
+                <p class="text-white">Gratter pour découvrir</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 10. SYNTHÉ MODULAIRE DES COMPÉTENCES ========== -->
+    <section id="synthe" class="snap-section bg-netflix-dark">
+        <h2 class="text-3xl md:text-5xl font-bold text-center mb-8 kinetic-title">Construisez <span class="text-netflix-accent">votre stack</span></h2>
+        <div class="max-w-2xl mx-auto flex flex-wrap justify-center gap-4">
+            <button class="skill-btn bg-netflix-secondary px-6 py-3 rounded-full text-white" data-sound="react">React</button>
+            <button class="skill-btn bg-netflix-secondary px-6 py-3 rounded-full text-white" data-sound="node">Node.js</button>
+            <button class="skill-btn bg-netflix-secondary px-6 py-3 rounded-full text-white" data-sound="uiux">UI/UX</button>
+            <button class="skill-btn bg-netflix-secondary px-6 py-3 rounded-full text-white" data-sound="python">Python</button>
+            <button class="skill-btn bg-netflix-secondary px-6 py-3 rounded-full text-white" data-sound="docker">Docker</button>
+        </div>
+        <p class="text-center text-netflix-muted mt-6" id="synthe-message">Chaque techno est un son – ensemble, elles font votre projet.</p>
+    </section>
+
+    <!-- ========== 11. PUZZLE PROBLÈME → SOLUTION ========== -->
+    <section id="puzzle" class="snap-section bg-netflix-card">
+        <h2 class="text-3xl md:text-5xl font-bold text-center mb-8 kinetic-title">Votre problème, <span class="text-netflix-accent">ma solution</span></h2>
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="flex flex-wrap justify-center gap-4 mb-6">
+                <button class="puzzle-btn bg-netflix-secondary px-6 py-3 rounded-full" data-case="lent">Site trop lent</button>
+                <button class="puzzle-btn bg-netflix-secondary px-6 py-3 rounded-full" data-case="panier">Panier abandonné</button>
+                <button class="puzzle-btn bg-netflix-secondary px-6 py-3 rounded-full" data-case="mobile">Pas d'app mobile</button>
+            </div>
+            <div id="puzzle-result" class="text-netflix-muted italic">
+                Cliquez sur un problème pour voir comment je le résous.
+            </div>
+        </div>
+    </section>
+
+       <!-- ========== 12. CARTE DU MONDE DES DÉTAILS ========== -->
+    <section id="carte-monde" class="snap-section bg-netflix-dark">
+        <h2 class="text-3xl md:text-5xl font-bold text-center mb-8 kinetic-title">Clients & <span class="text-netflix-accent">inspirations</span></h2>
+        <div class="max-w-4xl mx-auto text-center">
+            <canvas id="worldMap" width="400" height="200" class="mx-auto"></canvas>
+            <p class="text-netflix-muted italic mt-4" id="map-story">Survolez les points pour lire l'histoire.</p>
+        </div>
+    </section>
+
+    <!-- ========== 13. RADAR DES OPPORTUNITÉS ========== -->
+    <section id="radar" class="snap-section bg-netflix-card">
+        <h2 class="text-3xl md:text-5xl font-bold text-center mb-8 kinetic-title">Opportunités <span class="text-netflix-accent">en direct</span></h2>
+        <div class="max-w-md mx-auto relative">
+            <canvas id="radar-canvas" width="300" height="300" class="mx-auto"></canvas>
+            <div class="radar-blip" style="top:20%; left:60%;" data-offer="MVP rapide"></div>
+            <div class="radar-blip" style="top:70%; left:30%;" data-offer="Automatisation"></div>
+            <div class="radar-blip" style="top:40%; left:80%;" data-offer="+40% conversion"></div>
+        </div>
+        <p class="text-center text-netflix-muted mt-4" id="radar-offer">Cliquez sur une pastille pour voir une offre.</p>
+    </section>
+
+    <!-- ========== 14. JEU DU DEVINEZ LE DÉTAIL ========== -->
+    <section id="jeu-detail" class="snap-section bg-netflix-dark">
+        <h2 class="text-3xl md:text-5xl font-bold text-center mb-8 kinetic-title">Devinez <span class="text-netflix-accent">l'amélioration</span></h2>
+        <div class="max-w-2xl mx-auto text-center">
+            <div id="detail-question" class="bg-netflix-card p-6 rounded-2xl mb-4">
+                <p class="text-white">Avant : site 5 secondes de chargement.</p>
+                <p class="text-white">Après : site 0.8 seconde.</p>
+                <p class="text-netflix-muted mt-2">Qu'est-ce qui a été optimisé ?</p>
+            </div>
+            <button class="detail-guess bg-netflix-secondary px-4 py-2 rounded-full mr-2" data-answer="cache">Mise en cache</button>
+            <button class="detail-guess bg-netflix-secondary px-4 py-2 rounded-full mr-2" data-answer="images">Compression images</button>
+            <button class="detail-guess bg-netflix-secondary px-4 py-2 rounded-full" data-answer="cdn">CDN</button>
+            <p id="detail-result" class="mt-4 text-netflix-accent font-semibold"></p>
+        </div>
+    </section>
+
+    <!-- ========== 15. CE QUE JE NE FERAI PAS ========== -->
+    <section id="refus" class="snap-section bg-netflix-card">
+        <h2 class="text-3xl md:text-5xl font-bold text-center mb-8 kinetic-title">Ce que <span class="text-netflix-accent">je ne ferai pas</span> pour vous</h2>
+        <div class="max-w-3xl mx-auto text-center space-y-6 text-netflix-muted">
+            <p><i class="fas fa-times-circle text-netflix-accent mr-2"></i> Je ne promets pas des résultats en 2 jours. <span class="text-white">Mais je garantis une analyse complète en 48h.</span></p>
+            <p><i class="fas fa-times-circle text-netflix-accent mr-2"></i> Je ne ferai pas de noir et blanc sans stratégie. <span class="text-white">Chaque choix est expliqué et documenté.</span></p>
+            <p><i class="fas fa-times-circle text-netflix-accent mr-2"></i> Je n'utiliserai pas de code non testé. <span class="text-white">Tout est validé par des tests automatisés.</span></p>
+        </div>
+    </section>
+
+    <!-- ========== 16. ARSENAL TECHNIQUE ========== -->
+    <section id="arsenal" class="snap-section bg-netflix-dark">
+        <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 kinetic-title">Arsenal <span class="text-netflix-accent">technique</span></h2>
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-6 max-w-5xl mx-auto text-center">
+            <!-- icônes et noms (Python, FastAPI, PostgreSQL, JS, React, Node.js, Docker, Git, Responsive, AWS, IA/ML, Cybersécurité) -->
+            <div class="flex flex-col items-center gap-2"><i class="fab fa-python text-4xl text-blue-400 gear"></i><span class="text-xs text-netflix-muted">Python</span></div>
+            <div class="flex flex-col items-center gap-2"><i class="fas fa-server text-4xl text-green-500 gear"></i><span class="text-xs text-netflix-muted">FastAPI</span></div>
+            <div class="flex flex-col items-center gap-2"><i class="fas fa-database text-4xl text-yellow-500 gear"></i><span class="text-xs text-netflix-muted">PostgreSQL</span></div>
+            <div class="flex flex-col items-center gap-2"><i class="fab fa-js text-4xl text-yellow-400 gear"></i><span class="text-xs text-netflix-muted">JavaScript</span></div>
+            <div class="flex flex-col items-center gap-2"><i class="fab fa-react text-4xl text-cyan-400 gear"></i><span class="text-xs text-netflix-muted">React</span></div>
+            <div class="flex flex-col items-center gap-2"><i class="fab fa-node-js text-4xl text-green-600 gear"></i><span class="text-xs text-netflix-muted">Node.js</span></div>
+            <div class="flex flex-col items-center gap-2"><i class="fab fa-docker text-4xl text-blue-500 gear"></i><span class="text-xs text-netflix-muted">Docker</span></div>
+            <div class="flex flex-col items-center gap-2"><i class="fab fa-git-alt text-4xl text-red-500 gear"></i><span class="text-xs text-netflix-muted">Git</span></div>
+            <div class="flex flex-col items-center gap-2"><i class="fas fa-mobile-alt text-4xl text-gray-400 gear"></i><span class="text-xs text-netflix-muted">Responsive</span></div>
+            <div class="flex flex-col items-center gap-2"><i class="fab fa-aws text-4xl text-orange-400 gear"></i><span class="text-xs text-netflix-muted">AWS</span></div>
+            <div class="flex flex-col items-center gap-2"><i class="fas fa-brain text-4xl text-purple-400 gear"></i><span class="text-xs text-netflix-muted">IA / ML</span></div>
+            <div class="flex flex-col items-center gap-2"><i class="fas fa-lock text-4xl text-green-400 gear"></i><span class="text-xs text-netflix-muted">Cybersécurité</span></div>
+        </div>
+    </section>
+
+    <!-- ========== 17. BLOG ========== -->
+    <section id="blog-extrait" class="snap-section bg-netflix-card">
+        <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 kinetic-title">Mes <span class="text-netflix-accent">astuces</span></h2>
+        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for article in articles[:3] if articles %}
+            <div class="card-project p-6">
+                <h3 class="project-title text-xl mb-2">{{ article.titre }}</h3>
+                <p class="project-excerpt">{{ article.contenu[:120] }}...</p>
+                <a href="/blog/{{ article.slug }}" class="project-btn mt-4"><i class="fas fa-book-open mr-2"></i> Lire <i class="fas fa-arrow-right"></i></a>
+            </div>
+            {% else %}
+            <div class="col-span-3 text-center text-netflix-muted"><p>Aucun article pour le moment.</p></div>
+            {% endfor %}
+        </div>
+        <a href="/blog" class="mt-8 text-netflix-accent underline hover:text-white transition inline-block"><i class="fas fa-arrow-circle-right mr-2"></i> Voir tous les articles →</a>
+    </section>
+
+        <!-- ========== LE PARI INVERSÉ ========== -->
+    <section id="pari-inverse" class="snap-section bg-netflix-dark py-20 px-4">
+        <div class="max-w-5xl mx-auto text-center">
+            <span class="inline-flex items-center gap-1 bg-netflix-accent/10 text-netflix-accent text-sm font-semibold px-3 py-1 rounded-full">
+                <i class="fas fa-bolt"></i> unique
+            </span>
+            <h2 class="text-4xl md:text-6xl font-bold mt-4 kinetic-title">Le pari <span class="text-netflix-accent">inversé</span></h2>
+            <p class="text-netflix-muted text-lg mt-4 max-w-2xl mx-auto">
+                Je ne vous demande pas de me croire. Je vous demande de me tester sur <span class="text-netflix-accent">un point précis</span>.
+            </p>
+
+            <!-- Sélecteur à 3 options -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12 mb-8">
+                <label class="option-card bg-netflix-card border border-white/5 p-5 rounded-xl cursor-pointer flex items-start gap-3">
+                    <input type="radio" name="challenge" value="opt-speed" class="sr-only peer" checked>
+                    <div class="flex-1 text-left">
+                        <div class="flex items-center gap-2"><i class="fas fa-bolt text-netflix-accent"></i><span class="font-semibold">Optimisation vitesse</span></div>
+                        <span class="text-netflix-muted text-sm">Gagnez 0,5s de chargement sur une page</span>
+                    </div>
+                    <div class="w-5 h-5 rounded-full border-2 border-white/20 peer-checked:border-netflix-accent peer-checked:bg-netflix-accent transition mt-1"></div>
+                </label>
+                <label class="option-card bg-netflix-card border border-white/5 p-5 rounded-xl cursor-pointer flex items-start gap-3">
+                    <input type="radio" name="challenge" value="opt-auto" class="sr-only peer">
+                    <div class="flex-1 text-left">
+                        <div class="flex items-center gap-2"><i class="fas fa-robot text-netflix-accent"></i><span class="font-semibold">Automatisation</span></div>
+                        <span class="text-netflix-muted text-sm">Une tâche manuelle devient automatique</span>
+                    </div>
+                    <div class="w-5 h-5 rounded-full border-2 border-white/20 peer-checked:border-netflix-accent peer-checked:bg-netflix-accent transition mt-1"></div>
+                </label>
+                <label class="option-card bg-netflix-card border border-white/5 p-5 rounded-xl cursor-pointer flex items-start gap-3">
+                    <input type="radio" name="challenge" value="opt-conversion" class="sr-only peer">
+                    <div class="flex-1 text-left">
+                        <div class="flex items-center gap-2"><i class="fas fa-chart-line text-netflix-accent"></i><span class="font-semibold">Audit conversion</span></div>
+                        <span class="text-netflix-muted text-sm">Analyse de votre tunnel en 15 min</span>
+                    </div>
+                    <div class="w-5 h-5 rounded-full border-2 border-white/20 peer-checked:border-netflix-accent peer-checked:bg-netflix-accent transition mt-1"></div>
+                </label>
+            </div>
+
+            <!-- Compteur de défis -->
+            <div class="mb-8">
+                <div class="inline-flex items-center gap-2 bg-netflix-card px-5 py-2 rounded-full">
+                    <i class="fas fa-check-circle text-netflix-accent"></i>
+                    <span class="text-2xl font-mono font-bold" id="challengesCounter">47</span>
+                    <span class="text-netflix-muted">défis relevés ce mois-ci</span>
+                </div>
+            </div>
+
+            <!-- Bouton principal -->
+            <button id="triggerChallengeBtn" class="bg-netflix-accent hover:bg-red-700 text-white font-bold py-4 px-10 rounded-2xl text-xl transition-all duration-300 shadow-lg shadow-red-900/30 inline-flex items-center gap-2">
+                <i class="fas fa-rocket"></i> Je lance le défi
+                <i class="fas fa-arrow-right transition-transform duration-300 group-hover:translate-x-1"></i>
+            </button>
+            <p class="text-netflix-muted text-sm mt-3">Aucun paiement initial. Résultat sous 48h ou premier mois gratuit.</p>
+
+            <!-- Formulaire caché -->
+            <div id="challengeFormContainer" class="hidden max-w-md mx-auto mt-8 p-6 rounded-2xl bg-netflix-card border border-white/5">
+                <h3 class="text-xl font-semibold mb-3">Saisissez votre défi</h3>
+                <form id="challengeForm">
+                    <div class="mb-4 text-left">
+                        <label class="block text-sm text-netflix-muted mb-1">Email professionnel</label>
+                        <input type="email" required class="w-full px-4 py-2 bg-netflix-dark border border-white/10 rounded-lg focus:ring-2 focus:ring-netflix-accent text-white" placeholder="vous@exemple.com">
+                    </div>
+                    <div class="mb-4 text-left">
+                        <label class="block text-sm text-netflix-muted mb-1">Nom du projet / site web</label>
+                        <input type="text" required class="w-full px-4 py-2 bg-netflix-dark border border-white/10 rounded-lg focus:ring-2 focus:ring-netflix-accent text-white" placeholder="ex: vitrine-ecommerce.fr">
+                    </div>
+                    <div class="mb-6 text-left">
+                        <label class="block text-sm text-netflix-muted mb-1">Le défi que vous voulez tester</label>
+                        <input type="text" id="selectedOptionDisplay" readonly class="w-full px-4 py-2 bg-netflix-dark/50 border border-white/10 rounded-lg text-netflix-muted cursor-not-allowed">
+                    </div>
+                    <button type="submit" class="w-full bg-white text-gray-900 font-bold py-2 rounded-lg hover:bg-gray-200 transition inline-flex items-center justify-center gap-2">
+                        <i class="fas fa-paper-plane"></i> Envoyer mon défi
+                    </button>
+                    <p class="text-netflix-muted text-xs text-center mt-4">Sans engagement. Je vous réponds en moins de 24h.</p>
+                </form>
+            </div>
+
+            <!-- Horloge de confiance -->
+            <div class="flex justify-center items-center gap-2 mt-12 text-sm text-netflix-muted border-t border-white/5 pt-8">
+                <i class="fas fa-clock text-netflix-accent"></i>
+                <span>Engagement 48h :</span>
+                <span id="trustClock" class="font-mono">48h00m</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 18. APPEL À L'ACTION ========== -->
+    <section id="audit" class="snap-section bg-netflix-dark">
+        <h2 class="text-3xl md:text-5xl font-bold text-center mb-4 kinetic-title">Prêt à passer à la <span class="text-netflix-accent">vitesse supérieure</span> ?</h2>
+        <p class="text-center text-netflix-muted mb-6 max-w-xl mx-auto">Diagnostic gratuit de votre présence numérique.</p>
+        <a href="/contact" class="bg-netflix-accent text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-red-700 transition inline-block"><i class="fas fa-rocket mr-2"></i> Demander mon audit gratuit <i class="fas fa-arrow-right ml-2"></i></a>
+        <p class="text-xs text-netflix-muted mt-4"><i class="fas fa-clock mr-1"></i> Plus que 2 créneaux disponibles ce mois-ci</p>
+    </section>
+
+    <!-- ========== 19. CONTACT ========== -->
+    <section id="rencontre" class="snap-section bg-netflix-card">
+        <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 kinetic-title">Travaillons <span class="text-netflix-accent">ensemble</span></h2>
+        <div class="flex flex-wrap gap-6 justify-center mb-8">
+            {% for lien in liens %}
+            <a href="{{ lien.url }}" target="_blank" class="flex items-center gap-2 bg-netflix-secondary px-5 py-3 rounded-full hover:bg-netflix-accent transition text-sm md:text-base"><i class="{{ lien.icone }} text-lg"></i> {{ lien.nom }}</a>
+            {% endfor %}
+        </div>
+        <a href="/contact" class="text-netflix-accent underline hover:text-white transition"><i class="fas fa-envelope mr-1"></i> Formulaire complet</a>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="/static/js/interactions.js"></script>
+<script>
+    // Salutation horaire
+    const hour = new Date().getHours();
+    const greetingEl = document.getElementById('greeting');
+    if (greetingEl) {
+        let greeting = '👋 Bonjour, je suis';
+        if (hour >= 18 || hour < 5) greeting = '🌙 Bonsoir, je suis';
+        else if (hour >= 14) greeting = '☀️ Bon après-midi, je suis';
+        greetingEl.textContent = greeting;
+    }
+
+    // Géolocalisation
+    const locationEl = document.getElementById('location');
+    if (locationEl) {
+        fetch('https://ipapi.co/json/')
+            .then(r => r.json())
+            .then(data => {
+                if (data.city) locationEl.innerHTML = '<i class="fas fa-map-marker-alt"></i><span>' + data.city + ', ' + data.country_name + '</span>';
+            })
+            .catch(() => {
+                locationEl.innerHTML = '<i class="fas fa-map-marker-alt"></i><span>🌍 Quelque part dans le monde</span>';
+            });
+    }
+
+    // Swiper
+    const swiper = new Swiper('.mySwiper', {
+        effect: 'coverflow', grabCursor: true, centeredSlides: true, slidesPerView: 'auto', loop: false,
+        autoplay: { delay: 3500, disableOnInteraction: false },
+        coverflowEffect: { rotate: 25, stretch: 0, depth: 250, modifier: 1, slideShadows: false },
+        pagination: { el: '.swiper-pagination', clickable: true },
+        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+    });
+    const swiperEl = document.querySelector('.mySwiper');
+    if (swiperEl) {
+        const progressBar = document.createElement('div');
+        progressBar.className = 'swiper-progress-bar';
+        progressBar.innerHTML = '<div class="swiper-progress-fill"></div>';
+        swiperEl.appendChild(progressBar);
+        const fill = progressBar.querySelector('.swiper-progress-fill');
+        swiper.on('autoplayTimeLeft', function(s, time, progress) { fill.style.width = (1 - progress) * 100 + '%'; });
+    }
+    // ====== COMPTEURS DE STATS HERO ======
+const statNumbers = document.querySelectorAll('#hero .stat-number');
+if (statNumbers.length) {
+    let statsAnimated = false;
+    function animateStats() {
+        if (statsAnimated) return;
+        statsAnimated = true;
+        statNumbers.forEach(function(stat) {
+            const target = parseInt(stat.dataset.count) || 0;
+            let current = 0;
+            const increment = Math.ceil(target / 30);
+            const timer = setInterval(function() {
+                current += increment;
+                if (current >= target) { current = target; clearInterval(timer); }
+                stat.textContent = current;
+            }, 50);
+        });
+    }
+    // Lancer après 1 seconde
+    setTimeout(animateStats, 1000);
+}
+// ====== VARIANTES PHOTO ======
+const variantBtns = document.querySelectorAll('#hero .variant-btn');
+const profilePhoto = document.getElementById('profile-photo');
+
+if (variantBtns.length && profilePhoto) {
+    const variants = ['variant-1', 'variant-2', 'variant-3'];
+    const randomVariant = variants[Math.floor(Math.random() * variants.length)];
+    profilePhoto.classList.add(randomVariant);
+
+    variantBtns.forEach(function(btn) {
+        if (btn.dataset.variant === randomVariant) btn.classList.add('active');
+        else btn.classList.remove('active');
+
+        btn.addEventListener('click', function() {
+            variants.forEach(function(v) { profilePhoto.classList.remove(v); });
+            variantBtns.forEach(function(b) { b.classList.remove('active'); });
+            profilePhoto.classList.add(this.dataset.variant);
+            this.classList.add('active');
+        });
+    });
+}
+</script>
+{% endblock %}

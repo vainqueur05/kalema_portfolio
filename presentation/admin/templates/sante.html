@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Santé du site – Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { 'netflix-dark': '#0A0A0A', 'netflix-card': '#141414', 'netflix-secondary': '#1E1E1E', 'netflix-accent': '#E50914' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-netflix-dark text-white flex">
+    <aside class="w-72 bg-netflix-card min-h-screen p-6 border-r border-white/5 flex flex-col">
+        <a href="/admin" class="text-2xl font-bold text-netflix-accent mb-10">VK<span class="text-white">.</span></a>
+        <nav class="flex-1 space-y-1 text-sm">
+            <a href="/admin" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-tachometer-alt w-5"></i> Dashboard</a>
+            <a href="/admin/profil" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-user w-5"></i> Profil</a>
+            <a href="/admin/projets" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-folder w-5"></i> Projets</a>
+            <a href="/admin/services" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-cogs w-5"></i> Services</a>
+            <a href="/admin/temoignages" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-star w-5"></i> Témoignages</a>
+            <a href="/admin/about" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-info-circle w-5"></i> À propos</a>
+            <a href="/admin/liens" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-link w-5"></i> Liens</a>
+            <a href="/admin/contacts" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-envelope w-5"></i> Messages</a>
+            <a href="/admin/visites" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-chart-line w-5"></i> Visites</a>
+            <a href="/admin/heatmap" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-fire w-5"></i> Heatmap</a>
+            <a href="/admin/sante" class="flex items-center gap-3 py-3 px-4 rounded-xl bg-netflix-accent text-white"><i class="fas fa-heartbeat w-5"></i> Santé</a>
+            <a href="/admin/snapshots" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-save w-5"></i> Sauvegardes</a>
+            <a href="/admin/media" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-image w-5"></i> Médias</a>
+            <a href="/admin/maintenance" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-tools w-5"></i> Maintenance</a>
+        </nav>
+        <div class="pt-4 border-t border-white/5 space-y-1">
+            <a href="/" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary text-sm"><i class="fas fa-eye w-5"></i> Voir le site</a>
+            <a href="/admin/logout" class="flex items-center gap-3 py-3 px-4 rounded-xl text-red-400 hover:bg-netflix-secondary text-sm"><i class="fas fa-sign-out-alt w-5"></i> Déconnexion</a>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-8 overflow-y-auto">
+        <h1 class="text-4xl font-bold mb-2">Santé du <span class="text-netflix-accent">site</span></h1>
+        <p class="text-gray-400 mb-8">Surveillez les performances et les erreurs.</p>
+
+        <!-- Indicateurs -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <div class="bg-netflix-card p-6 rounded-2xl border border-white/5 text-center">
+                <i class="fas fa-clock text-3xl text-green-400 mb-3"></i>
+                <p class="text-3xl font-bold text-white">99.9%</p>
+                <p class="text-gray-400 text-sm mt-1">Uptime (30 jours)</p>
+            </div>
+            <div class="bg-netflix-card p-6 rounded-2xl border border-white/5 text-center">
+                <i class="fas fa-tachometer-alt text-3xl text-blue-400 mb-3"></i>
+                <p class="text-3xl font-bold text-white">0.4s</p>
+                <p class="text-gray-400 text-sm mt-1">Temps de réponse</p>
+            </div>
+            <div class="bg-netflix-card p-6 rounded-2xl border border-white/5 text-center">
+                <i class="fas fa-bug text-3xl text-yellow-400 mb-3"></i>
+                <p class="text-3xl font-bold text-white">3</p>
+                <p class="text-gray-400 text-sm mt-1">Erreurs 500 (7 jours)</p>
+            </div>
+            <div class="bg-netflix-card p-6 rounded-2xl border border-white/5 text-center">
+                <i class="fas fa-link text-3xl text-red-400 mb-3"></i>
+                <p class="text-3xl font-bold text-white">12</p>
+                <p class="text-gray-400 text-sm mt-1">Erreurs 404 (7 jours)</p>
+            </div>
+        </div>
+
+        <!-- Graphique temps de réponse -->
+        <div class="bg-netflix-card p-6 rounded-2xl border border-white/5 mb-8">
+            <h3 class="text-lg font-semibold text-white mb-4">Temps de réponse (24h)</h3>
+            <canvas id="responseChart" height="80"></canvas>
+        </div>
+
+        <!-- Logs d'erreurs -->
+        <div class="bg-netflix-card p-6 rounded-2xl border border-white/5">
+            <h3 class="text-lg font-semibold text-white mb-4">Dernières erreurs</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-gray-400 border-b border-white/5">
+                        <tr>
+                            <th class="py-3 px-4">Date</th>
+                            <th class="py-3 px-4">Code</th>
+                            <th class="py-3 px-4">Page</th>
+                            <th class="py-3 px-4">Détail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-white/5 hover:bg-netflix-secondary/30 transition">
+                            <td class="py-3 px-4 text-gray-400">2026-06-16 14:32</td>
+                            <td class="py-3 px-4"><span class="px-2 py-0.5 bg-red-600/20 text-red-400 rounded-full text-xs">500</span></td>
+                            <td class="py-3 px-4">/admin/blog</td>
+                            <td class="py-3 px-4 text-gray-400">Internal Server Error</td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-netflix-secondary/30 transition">
+                            <td class="py-3 px-4 text-gray-400">2026-06-16 12:15</td>
+                            <td class="py-3 px-4"><span class="px-2 py-0.5 bg-yellow-600/20 text-yellow-400 rounded-full text-xs">404</span></td>
+                            <td class="py-3 px-4">/old-page</td>
+                            <td class="py-3 px-4 text-gray-400">Page not found</td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-netflix-secondary/30 transition">
+                            <td class="py-3 px-4 text-gray-400">2026-06-16 09:45</td>
+                            <td class="py-3 px-4"><span class="px-2 py-0.5 bg-red-600/20 text-red-400 rounded-full text-xs">500</span></td>
+                            <td class="py-3 px-4">/api/tracking</td>
+                            <td class="py-3 px-4 text-gray-400">Database connection timeout</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const ctx = document.getElementById('responseChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['00h', '04h', '08h', '12h', '16h', '20h'],
+                datasets: [{
+                    label: 'Temps de réponse (ms)',
+                    data: [320, 280, 350, 410, 390, 400],
+                    borderColor: '#E50914',
+                    backgroundColor: 'rgba(229,9,20,0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#E50914'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { color: '#B3B3B3' } },
+                    x: { ticks: { color: '#B3B3B3' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

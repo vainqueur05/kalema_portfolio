@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message de {{ contact.nom }} – Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { 'netflix-dark': '#0A0A0A', 'netflix-card': '#141414', 'netflix-secondary': '#1E1E1E', 'netflix-accent': '#E50914' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-netflix-dark text-white flex">
+    <aside class="w-72 bg-netflix-card min-h-screen p-6 border-r border-white/5 flex flex-col">
+        <a href="/admin" class="text-2xl font-bold text-netflix-accent mb-10">VK<span class="text-white">.</span></a>
+        <nav class="flex-1 space-y-1 text-sm">
+            <a href="/admin" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-tachometer-alt w-5"></i> Dashboard</a>
+            <a href="/admin/contacts" class="flex items-center gap-3 py-3 px-4 rounded-xl bg-netflix-accent text-white"><i class="fas fa-envelope w-5"></i> Messages</a>
+        </nav>
+        <div class="pt-4 border-t border-white/5">
+            <a href="/admin/logout" class="flex items-center gap-3 py-3 px-4 rounded-xl text-red-400 hover:bg-netflix-secondary text-sm"><i class="fas fa-sign-out-alt w-5"></i> Déconnexion</a>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-8 overflow-y-auto">
+        <div class="max-w-3xl">
+            <a href="/admin/contacts" class="text-gray-400 hover:text-white transition mb-6 inline-flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Retour aux messages
+            </a>
+            <h1 class="text-4xl font-bold mt-4 mb-8">Message de <span class="text-netflix-accent">{{ contact.nom }}</span></h1>
+
+            <div class="bg-netflix-card p-8 rounded-2xl border border-white/5 space-y-6">
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-gray-400 text-sm mb-1">De</p>
+                        <p class="text-white font-semibold">{{ contact.nom }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-sm mb-1">Email</p>
+                        <p class="text-white">{{ contact.email }}</p>
+                    </div>
+                    {% if contact.telephone %}
+                    <div>
+                        <p class="text-gray-400 text-sm mb-1">Téléphone</p>
+                        <p class="text-white">{{ contact.telephone }}</p>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <p class="text-gray-400 text-sm mb-1">Statut</p>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold {% if contact.statut == 'Nouveau' %}bg-red-600{% elif contact.statut == 'Lu' %}bg-yellow-600{% else %}bg-green-600{% endif %}">
+                            {{ contact.statut }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="bg-netflix-dark p-6 rounded-xl border border-white/5">
+                    <p class="text-gray-400 text-sm mb-2">Message</p>
+                    <p class="text-white leading-relaxed whitespace-pre-wrap">{{ contact.message }}</p>
+                </div>
+
+                {% if contact.note_admin %}
+                <div class="bg-netflix-dark p-6 rounded-xl border border-netflix-accent/20">
+                    <p class="text-netflix-accent text-sm mb-2"><i class="fas fa-sticky-note mr-2"></i> Note admin</p>
+                    <p class="text-white">{{ contact.note_admin }}</p>
+                </div>
+                {% endif %}
+
+                <div class="flex flex-col md:flex-row gap-4 pt-6 border-t border-white/5">
+                    <form method="POST" action="/admin/contacts/{{ contact.id }}/statut" class="flex gap-3">
+                        <select name="statut" class="bg-netflix-dark border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:border-netflix-accent focus:outline-none">
+                            <option value="Nouveau" {% if contact.statut == 'Nouveau' %}selected{% endif %}>Nouveau</option>
+                            <option value="Lu" {% if contact.statut == 'Lu' %}selected{% endif %}>Lu</option>
+                            <option value="Répondu" {% if contact.statut == 'Répondu' %}selected{% endif %}>Répondu</option>
+                        </select>
+                        <button type="submit" class="bg-netflix-accent text-white px-4 py-2 rounded-xl text-sm hover:bg-red-700 transition">
+                            Changer statut
+                        </button>
+                    </form>
+                    <form method="POST" action="/admin/contacts/{{ contact.id }}/note" class="flex gap-3 flex-1">
+                        <input type="text" name="note_admin" placeholder="Ajouter une note privée..." value="{{ contact.note_admin or '' }}" class="flex-1 bg-netflix-dark border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:border-netflix-accent focus:outline-none">
+                        <button type="submit" class="bg-netflix-secondary text-white px-4 py-2 rounded-xl text-sm hover:bg-gray-600 transition">
+                            Sauver
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

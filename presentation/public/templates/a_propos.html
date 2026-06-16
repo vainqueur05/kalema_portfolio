@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}À propos | Bridge Afrika{% endblock %}
+{% block meta_description %}Vainqueur Kalema – Fondateur de Bridge Afrika. Du premier PC à 50$ aux systèmes invisibles qui transforment les business en Afrique. Voici mon histoire.{% endblock %}
+{% block og_title %}Vainqueur Kalema – Bridge Afrika{% endblock %}
+{% block og_description %}Du code sur un PC à 50$ aux solutions invisibles pour l'Afrique. Découvrez mon parcours, mes échecs et ma mission.{% endblock %}
+
+{% block extra_head %}
+<style>
+    .value-card:hover .value-icon { transform: scale(1.3) rotate(5deg); }
+    .value-icon { transition: all 0.3s; }
+    .echec-card { perspective: 1000px; cursor: pointer; }
+    .echec-card-inner { transition: transform 0.6s; transform-style: preserve-3d; }
+    .echec-card.flipped .echec-card-inner { transform: rotateY(180deg); }
+    .echec-front, .echec-back { backface-visibility: hidden; }
+    .echec-back { transform: rotateY(180deg); background: #E50914; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; border-radius: 1rem; padding: 1.5rem; }
+    .serment-stone { background: linear-gradient(135deg, #2a2a2a, #1a1a1a); border: 2px solid #E50914; animation: stone-appear 2s ease-out; }
+    @keyframes stone-appear { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+    .anecdote-bubble { animation: float 4s ease-in-out infinite; }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .timeline-dot { width: 12px; height: 12px; background: #E50914; border-radius: 50%; position: absolute; left: -6px; top: 0; }
+    .timeline-line { position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: rgba(229,9,20,0.3); }
+    .skill-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+    .skill-fill { height: 100%; background: #E50914; border-radius: 2px; width: 0; transition: width 1.5s ease-out; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="min-h-screen bg-netflix-dark pt-24 pb-16 px-4">
+    <div class="max-w-5xl mx-auto">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-center mb-6">Mon <span class="text-netflix-accent">histoire</span></h1>
+        <p class="text-center text-netflix-muted text-lg mb-16 max-w-2xl mx-auto">Du premier PC à 50$ aux systèmes invisibles qui transforment des business. Voici comment tout a commencé.</p>
+
+        <!-- Timeline du parcours -->
+        <h2 class="text-2xl font-bold text-white mb-8 text-center">Le <span class="text-netflix-accent">parcours</span></h2>
+        <div class="relative max-w-3xl mx-auto mb-16">
+            <div class="timeline-line"></div>
+            {% set etapes = [
+    {
+        'annee': '2023',
+        'titre': 'Les premières lignes sur un téléphone',
+        'icone': 'fa-mobile-alt',
+        'contenu': 'J\'ai appris à programmer sur mon téléphone. Du simple HTML. Pas d\'ordinateur, pas d\'excuse. Je tapais du code dans un éditeur mobile, je visualisais le résultat sur le même écran. C\'était inconfortable, lent, frustrant. Mais c\'était possible. Cette période m\'a appris que l\'outil ne fait pas l\'artisan.'
+    },
+    {
+        'annee': '2023',
+        'titre': 'Le PC d\'une amie : ma première fenêtre',
+        'icone': 'fa-laptop-house',
+        'contenu': 'Une amie m\'a prêté son PC. J\'ai découvert C++ dessus. Puis Python, avec Tkinter et MySQL Connector. Je testais tout sur sa machine. Je rentrais chez elle pour coder, pour apprendre, pour expérimenter. Sans ce PC prêté, je ne serais probablement pas développeur aujourd\'hui. La générosité d\'une personne peut changer une trajectoire.'
+    },
+    {
+        'annee': '2024',
+        'titre': 'CustomTkinter et les premières applis pro',
+        'icone': 'fa-desktop',
+        'contenu': 'Toujours sur le PC de mon amie, j\'ai découvert CustomTkinter. Je construisais des interfaces modernes, je connectais des bases de données. J\'ai codé une application de gestion de patients, une autre pour les donneurs de sang, une autre pour l\'enregistrement des nouveau-nés. Du vrai logiciel, qui servait à de vraies personnes. Je n\'étais plus un étudiant. J\'étais un bâtisseur.'
+    },
+    {
+        'annee': 'Février 2025',
+        'titre': 'Le PC à 50$ : l\'intelligence du renard',
+        'icone': 'fa-frog',
+        'contenu': 'Avec un pote, on a joué les malins. On a repéré un PC portable dans une boutique. On a débranché l\'écran et le disque dur pour faire croire au vendeur qu\'il était mort. Négociation. 50 dollars. On est repartis avec la machine, on l\'a rebranchée, et elle a démarré. C\'était mon premier ordinateur personnel. Il était lent, capricieux, mais il était à moi. L\'intelligence du renard vaut parfois plus que l\'argent.'
+    },
+    {
+        'annee': '2025',
+        'titre': 'Applications de mémoire et outils sur mesure',
+        'icone': 'fa-brain',
+        'contenu': 'Sur ce PC à 50$, j\'ai codé une application de mémoire pour une amie, une autre pour un pote, toujours en CustomTkinter avec des bibliothèques Python. Gestion de donneurs, gestion de patients, enregistrement de nouveau-nés. Chaque projet renforçait ma conviction : le code peut résoudre des problèmes réels, ici, maintenant, dans ma ville.'
+    },
+    {
+        'annee': 'Janvier 2026',
+        'titre': 'Flask, Django, FastAPI : le virage web',
+        'icone': 'fa-globe',
+        'contenu': 'J\'ai découvert Flask, Django et FastAPI. J\'ai testé les trois. Flask m\'a séduit par sa simplicité. J\'ai commencé à construire des applications web. Des API. Des backends. Le monde du web s\'ouvrait à moi. Je ne codais plus pour un poste, je codais pour des utilisateurs partout dans le monde.'
+    },
+    {
+        'annee': 'Février 2026',
+        'titre': 'Le PC à 50$ a brûlé',
+        'icone': 'fa-fire',
+        'contenu': 'Mon fidèle PC à 50 dollars a rendu l\'âme. Il a littéralement brûlé. J\'étais sans machine. Pas de panique. J\'ai continué à apprendre, à lire, à concevoir dans ma tête. Un développeur sans ordinateur, c\'est comme un pilote sans avion. Mais je savais que je revolerais.'
+    },
+    {
+        'annee': 'Mars 2026',
+        'titre': 'Le PC du vieux : la résurrection',
+        'icone': 'fa-server',
+        'contenu': 'J\'ai récupéré un PC qui traînait chez un vieux monsieur. Une machine ancienne, poussiéreuse, mais qui fonctionnait. Je l\'ai nettoyée, configurée, et remise en service. Depuis ce jour, je code dessus. Cette machine est mon poste de commandement. Elle me rappelle chaque matin que le talent n\'attend pas le matériel parfait.'
+    },
+    {
+        'annee': '2026',
+        'titre': 'Bridge Afrika et la Solution Invisible',
+        'icone': 'fa-bridge',
+        'contenu': 'Avec mes cofondateurs Sylvain et David, j\'ai lancé Bridge Afrika. Notre mission : construire des ponts numériques accessibles même sur un téléphone à 10$. Kelya, École Facile, Yebela, StarMesh. Chaque projet répond à une injustice que j\'ai vue de mes propres yeux. L\'histoire ne fait que commencer.'
+    }
+] %}
+            {% for etape in etapes %}
+            <div class="relative pl-8 pb-12">
+                <div class="timeline-dot"></div>
+                <div class="bg-netflix-card rounded-2xl p-6 border border-white/5">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i class="fas {{ etape.icone }} text-netflix-accent text-xl"></i>
+                        <span class="text-netflix-accent font-bold text-sm">{{ etape.annee }}</span>
+                    </div>
+                    <h3 class="text-white text-xl font-bold mb-2">{{ etape.titre }}</h3>
+                    <p class="text-netflix-muted text-sm leading-relaxed">{{ etape.contenu }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Compétences visuelles -->
+        <h2 class="text-2xl font-bold text-white mb-8 text-center">Mon <span class="text-netflix-accent">arsenal</span></h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-16">
+            {% set competences = [
+                {'nom': 'Python / FastAPI', 'niveau': 95, 'icone': 'fab fa-python'},
+                {'nom': 'JavaScript', 'niveau': 85, 'icone': 'fab fa-js'},
+                {'nom': 'PostgreSQL / SQLAlchemy', 'niveau': 90, 'icone': 'fas fa-database'},
+                {'nom': 'WhatsApp Business API', 'niveau': 92, 'icone': 'fab fa-whatsapp'},
+                {'nom': 'SMS / USSD (Africa\'s Talking)', 'niveau': 88, 'icone': 'fas fa-sms'},
+                {'nom': 'Git / Docker / CI/CD', 'niveau': 80, 'icone': 'fab fa-git-alt'},
+            ] %}
+            {% for competence in competences %}
+            <div class="bg-netflix-card rounded-2xl p-5 border border-white/5">
+                <div class="flex items-center gap-3 mb-3">
+                    <i class="{{ competence.icone }} text-netflix-accent text-xl"></i>
+                    <span class="text-white font-medium">{{ competence.nom }}</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-fill" data-width="{{ competence.niveau }}"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Frise des échecs glorieux -->
+        <h2 class="text-2xl font-bold text-white mb-6 text-center">Mes plus belles <span class="text-netflix-accent">erreurs</span></h2>
+        <p class="text-center text-netflix-muted text-sm mb-8">Cliquez sur chaque carte pour découvrir la leçon</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            {% set echecs = [
+                {'front': 'Sous-estimer les tests', 'back': 'Depuis, j\'automatise tout. Résultat : zéro bug en production.'},
+                {'front': 'Négliger la communication client', 'back': 'Maintenant, rapport hebdomadaire systématique. Clients rassurés, projets fluides.'},
+                {'front': 'Oublier les backups', 'back': 'Backup quotidien automatique. Plus jamais de sueur froide à 2h du matin.'}
+            ] %}
+            {% for echec in echecs %}
+            <div class="echec-card bg-netflix-card rounded-2xl h-48" onclick="this.classList.toggle('flipped')">
+                <div class="echec-card-inner relative w-full h-full">
+                    <div class="echec-front absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                        <i class="fas fa-exclamation-circle text-4xl text-netflix-muted mb-3"></i>
+                        <p class="text-white font-semibold">{{ echec.front }}</p>
+                    </div>
+                    <div class="echec-back absolute inset-0 flex flex-col items-center justify-center p-6 text-center rounded-2xl">
+                        <i class="fas fa-lightbulb text-4xl text-white mb-3"></i>
+                        <p class="text-white text-sm font-medium">{{ echec.back }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Serment public -->
+        <div class="serment-stone max-w-2xl mx-auto p-8 rounded-2xl text-center mb-16">
+            <i class="fas fa-gem text-4xl text-netflix-accent mb-4"></i>
+            <h3 class="text-xl font-bold text-white mb-4">Le serment de Bridge Afrika</h3>
+            <p class="text-netflix-muted italic leading-relaxed">
+                « Je m'engage à construire des ponts numériques qui servent l'humain, respectent le continent et élèvent l'Afrique. Aucune technologie ne sera déployée si elle ne peut pas fonctionner sur un téléphone à 10$. Aucun client ne sera laissé dans le noir. Ce serment est gravé dans chaque ligne de code que j'écris. »
+            </p>
+            <p class="text-netflix-accent text-sm mt-4 font-semibold">— Vainqueur Kalema, Fondateur de Bridge Afrika</p>
+        </div>
+
+        <!-- Charte émotionnelle -->
+        <h2 class="text-2xl font-bold text-white mb-6 text-center">Ce que vous ressentirez en travaillant avec moi</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16 text-center">
+            <div class="value-card bg-netflix-card p-4 rounded-2xl">
+                <i class="fas fa-shield-alt value-icon text-4xl text-blue-400 mb-2"></i>
+                <p class="text-white text-sm font-medium">Sécurité</p>
+                <p class="text-netflix-muted text-xs mt-1">Votre projet est entre de bonnes mains</p>
+            </div>
+            <div class="value-card bg-netflix-card p-4 rounded-2xl">
+                <i class="fas fa-rocket value-icon text-4xl text-red-400 mb-2"></i>
+                <p class="text-white text-sm font-medium">Vitesse</p>
+                <p class="text-netflix-muted text-xs mt-1">Livraison en 14 jours, sans blabla</p>
+            </div>
+            <div class="value-card bg-netflix-card p-4 rounded-2xl">
+                <i class="fas fa-hand-holding-heart value-icon text-4xl text-pink-400 mb-2"></i>
+                <p class="text-white text-sm font-medium">Confiance</p>
+                <p class="text-netflix-muted text-xs mt-1">Transparence totale, à chaque étape</p>
+            </div>
+            <div class="value-card bg-netflix-card p-4 rounded-2xl">
+                <i class="fas fa-lightbulb value-icon text-4xl text-yellow-400 mb-2"></i>
+                <p class="text-white text-sm font-medium">Inspiration</p>
+                <p class="text-netflix-muted text-xs mt-1">Une vision qui donne envie d'avancer</p>
+            </div>
+        </div>
+
+        <!-- Anecdotes flottantes -->
+        <h2 class="text-2xl font-bold text-white mb-6 text-center">Le saviez-vous ?</h2>
+        <div class="flex flex-wrap justify-center gap-6 mb-16">
+            <div class="anecdote-bubble bg-netflix-card px-5 py-3 rounded-full text-sm text-netflix-muted" style="animation-delay: 0s;">
+                <i class="fas fa-laptop mr-2 text-netflix-accent"></i> J'ai appris à coder sur le PC d'une amie, puis sur un PC acheté 50$
+            </div>
+            <div class="anecdote-bubble bg-netflix-card px-5 py-3 rounded-full text-sm text-netflix-muted" style="animation-delay: 0.5s;">
+                <i class="fas fa-apple-alt mr-2 text-netflix-accent"></i> Mon premier client m'a payé en nature avant de me payer en cash
+            </div>
+            <div class="anecdote-bubble bg-netflix-card px-5 py-3 rounded-full text-sm text-netflix-muted" style="animation-delay: 1s;">
+                <i class="fas fa-clock mr-2 text-netflix-accent"></i> Je peux coder 5 heures d'affilée sans me lever
+            </div>
+            <div class="anecdote-bubble bg-netflix-card px-5 py-3 rounded-full text-sm text-netflix-muted" style="animation-delay: 1.5s;">
+                <i class="fas fa-bolt mr-2 text-netflix-accent"></i> Bridge Afrika est né d'une colère : un enfant avait volé 30$ à son père
+            </div>
+            <div class="anecdote-bubble bg-netflix-card px-5 py-3 rounded-full text-sm text-netflix-muted" style="animation-delay: 2s;">
+                <i class="fas fa-car-battery mr-2 text-netflix-accent"></i> J'ai démarré comme une vieille voiture : lent au début, impossible à arrêter ensuite
+            </div>
+            <div class="anecdote-bubble bg-netflix-card px-5 py-3 rounded-full text-sm text-netflix-muted" style="animation-delay: 2.5s;">
+                <i class="fas fa-frog mr-2 text-netflix-accent"></i> L'intelligence d'un renard m'a appris à négocier mon premier PC
+            </div>
+        </div>
+
+        <!-- La mission -->
+        <div class="bg-netflix-card rounded-2xl p-8 text-center mb-16">
+            <i class="fas fa-globe-africa text-5xl text-netflix-accent mb-4"></i>
+            <h3 class="text-2xl font-bold text-white mb-4">Ma mission</h3>
+            <p class="text-netflix-muted leading-relaxed max-w-2xl mx-auto">
+                Je ne construis pas des applications. Je construis des ponts invisibles qui relient les entreprises, les écoles et les communautés à leurs publics, directement sur les canaux qu'ils utilisent déjà. L'Afrique ne téléchargera pas votre application. Elle a WhatsApp. Elle a les SMS. Je l'y rejoins.
+            </p>
+        </div>
+
+        <!-- Invitation à contribuer -->
+        <div class="bg-netflix-card rounded-2xl p-8 text-center">
+            <h3 class="text-xl font-bold text-white mb-4">Laissez une graine d'idée</h3>
+            <p class="text-netflix-muted text-sm mb-4">Une idée, un rêve, un conseil... Je les collectionne.</p>
+            <textarea id="seed-input" class="w-full max-w-md bg-netflix-dark border border-white/10 rounded-xl px-4 py-3 text-white resize-none mb-4" rows="2" placeholder="Votre idée, votre rêve, votre conseil..."></textarea>
+            <button id="seed-btn" class="bg-netflix-accent text-white px-6 py-2 rounded-full hover:bg-red-700 transition"><i class="fas fa-seedling mr-2"></i> Planter</button>
+            <div id="seeds-wall" class="mt-6 flex flex-wrap gap-3 justify-center"></div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Animation des barres de compétences au scroll
+    const skillObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.width = entry.target.getAttribute('data-width') + '%';
+                skillObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.skill-fill').forEach(bar => skillObserver.observe(bar));
+
+    // Graines d'idées
+    const seeds = JSON.parse(localStorage.getItem('bridge-seeds') || '[]');
+    const seedsWall = document.getElementById('seeds-wall');
+    function renderSeeds() {
+        seedsWall.innerHTML = seeds.map(s => `<span class="bg-netflix-secondary text-netflix-muted text-xs px-3 py-1 rounded-full"><i class="fas fa-seedling mr-1 text-netflix-accent"></i>${s}</span>`).join('');
+    }
+    renderSeeds();
+    document.getElementById('seed-btn').addEventListener('click', () => {
+        const val = document.getElementById('seed-input').value.trim();
+        if (!val) return;
+        seeds.push(val);
+        localStorage.setItem('bridge-seeds', JSON.stringify(seeds));
+        document.getElementById('seed-input').value = '';
+        renderSeeds();
+    });
+</script>
+{% endblock %}
