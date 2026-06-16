@@ -115,6 +115,12 @@ from fastapi.responses import FileResponse
 def sitemap():
     return FileResponse("static/sitemap.xml", media_type="application/xml")
 
+from fastapi.responses import HTMLResponse
+
+@app.get("/google94b89e364e3eabb4.html", response_class=HTMLResponse)
+def google_verify():
+    return "google-site-verification: google94b89e364e3eabb4.html"
+
 # --- Route racine (vérification rapide) ---
 
 @app.get("/health")
