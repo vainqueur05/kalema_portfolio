@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sécurité – Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{'netflix-dark':'#0A0A0A','netflix-card':'#141414','netflix-accent':'#E50914'}}}}</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-netflix-dark text-white flex">
+    <aside class="w-72 bg-netflix-card min-h-screen p-6 border-r border-white/5 flex flex-col">
+        <a href="/admin" class="text-2xl font-bold text-netflix-accent mb-10">VK<span class="text-white">.</span></a>
+        <nav class="flex-1 space-y-1 text-sm">
+            <a href="/admin" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary transition"><i class="fas fa-tachometer-alt w-5"></i> Dashboard</a>
+            <a href="/admin/securite" class="flex items-center gap-3 py-3 px-4 rounded-xl bg-netflix-accent text-white"><i class="fas fa-shield-alt w-5"></i> Sécurité</a>
+        </nav>
+        <div class="pt-4 border-t border-white/5">
+            <a href="/" class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-netflix-secondary text-sm"><i class="fas fa-eye w-5"></i> Voir le site</a>
+            <a href="/admin/logout" class="flex items-center gap-3 py-3 px-4 rounded-xl text-red-400 hover:bg-netflix-secondary text-sm"><i class="fas fa-sign-out-alt w-5"></i> Déconnexion</a>
+        </div>
+    </aside>
+    <main class="flex-1 p-8 overflow-y-auto">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-4xl font-bold">Journal de <span class="text-netflix-accent">sécurité</span></h1>
+                <p class="text-gray-400 mt-1">{{ logs|length }} entrée(s) ces dernières 24 heures</p>
+            </div>
+            <a href="/admin" class="text-gray-400 hover:text-white transition"><i class="fas fa-arrow-left mr-2"></i>Retour</a>
+        </div>
+
+        {% if logs|length > 0 %}
+        <div class="grid gap-4">
+            {% for log in logs %}
+            <div class="bg-netflix-card p-5 rounded-2xl border border-white/5 flex items-center gap-4">
+                {% if log.status == "SUCCÈS" %}
+                <div class="w-10 h-10 bg-green-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-check-circle text-xl text-green-400"></i>
+                </div>
+                <div>
+                    <p class="text-white font-medium">{{ log.detail }}</p>
+                    <p class="text-xs text-gray-400">{{ log.timestamp.strftime('%d/%m/%Y à %H:%M') }} – IP : {{ log.ip }} – Utilisateur : <strong>{{ log.username }}</strong></p>
+                </div>
+                {% else %}
+                <div class="w-10 h-10 bg-red-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-times-circle text-xl text-red-400"></i>
+                </div>
+                <div>
+                    <p class="text-white font-medium">{{ log.detail }}</p>
+                    <p class="text-xs text-gray-400">{{ log.timestamp.strftime('%d/%m/%Y à %H:%M') }} – IP : {{ log.ip }} – Tentative : <strong>{{ log.username }}</strong></p>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-netflix-card p-12 rounded-2xl border border-white/5 text-center">
+            <i class="fas fa-shield-alt text-5xl text-gray-600 mb-4"></i>
+            <p class="text-gray-400 text-lg">Aucune tentative de connexion enregistrée</p>
+            <p class="text-gray-500 text-sm mt-2">Tout est calme pour le moment.</p>
+        </div>
+        {% endif %}
+    </main>
+</body>
+</html>

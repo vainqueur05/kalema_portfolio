@@ -61,13 +61,14 @@
             </div>
             {% endif %}
 
-            <!-- Formulaire -->
+            <!-- Étape 1 : Identifiants -->
+            {% if not show_2fa %}
             <form method="POST" class="space-y-5">
                 <div>
                     <label class="block text-sm text-gray-400 mb-2 font-medium">Nom d'utilisateur</label>
                     <div class="relative">
                         <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                        <input type="text" name="username" required class="w-full bg-netflix-dark border border-white/10 rounded-xl pl-11 pr-4 py-3 text-white focus:border-netflix-accent focus:outline-none transition" placeholder="votre identifiant">
+                        <input type="text" name="username" required class="w-full bg-netflix-dark border border-white/10 rounded-xl pl-11 pr-4 py-3 text-white focus:border-netflix-accent focus:outline-none transition" placeholder="votre identifiant" value="{{ username or '' }}">
                     </div>
                 </div>
                 <div>
@@ -81,6 +82,29 @@
                     <i class="fas fa-sign-in-alt"></i> Se connecter
                 </button>
             </form>
+            {% endif %}
+
+            <!-- Étape 2 : Code 2FA -->
+            {% if show_2fa %}
+            <div class="bg-netflix-accent/10 border border-netflix-accent/30 rounded-2xl p-6 mb-6 text-center">
+                <i class="fas fa-shield-alt text-3xl text-netflix-accent mb-3"></i>
+                <p class="text-white font-semibold mb-2">Vérification en deux étapes</p>
+                <p class="text-netflix-muted text-sm">Un code de sécurité a été envoyé à votre adresse email.</p>
+            </div>
+            <form method="POST" class="space-y-5">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2 font-medium text-center">Code de sécurité</label>
+                    <input type="text" name="code_2fa" placeholder="Entrez le code reçu" required 
+                           class="w-full bg-netflix-dark border border-netflix-accent/30 rounded-xl px-4 py-4 text-white focus:border-netflix-accent focus:outline-none transition text-center text-2xl tracking-widest"
+                           maxlength="6" autocomplete="off">
+                    <input type="hidden" name="username" value="{{ username }}">
+                    <input type="hidden" name="password" value="{{ password }}">
+                </div>
+                <button type="submit" class="w-full bg-netflix-accent text-white py-3 rounded-xl font-semibold hover:bg-red-700 transition flex items-center justify-center gap-2 text-lg">
+                    <i class="fas fa-check"></i> Vérifier
+                </button>
+            </form>
+            {% endif %}
 
             <!-- Lien retour -->
             <a href="/" class="flex items-center justify-center gap-2 text-sm text-gray-500 mt-6 hover:text-white transition">

@@ -37,6 +37,8 @@ from application.use_cases.about_service import AboutService
 from application.use_cases.contact_service import ContactService
 from application.use_cases.visite_service import VisiteService
 from application.use_cases.snapshot_service import SnapshotService
+from datetime import datetime, timedelta
+
 
 router = APIRouter()
 templates = Jinja2Templates(directory="presentation/admin/templates")
@@ -111,12 +113,53 @@ def admin_required(request: Request, db: Session = Depends(get_db)):
 @router.get("/login", response_class=HTMLResponse)
 def login_page(request: Request, error: Optional[str] = None):
     return templates.TemplateResponse("login.html", {"request": request, "error": error})
+# Journal de sécurité (stocké en mémoire)
+security_log = []
 
 @router.post("/login")
-def login(request: Request, username: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
+def login(request: Request, username: str = Form(...), password: str = Form(...), 
+           code_2fa: Optional[str] = Form(None), db: Session = Depends(get_db)):
     user = db.query(UserModel).filter(UserModel.username == username).first()
+    
+    # Vérification identifiants
     if not user or not PasswordService.verifier(password, user.password_hash):
-        return templates.TemplateResponse("login.html", {"request": request, "error": "Identifiants incorrects."}, status_code=401)
+        security_log.append({
+            "timestamp": datetime.now(), "ip": request.client.host,
+            "username": username, "status": "ÉCHEC", "detail": "Mot de passe incorrect"
+        })
+        return templates.TemplateResponse("login.html", {
+            "request": request, "error": "Identifiants incorrects."
+        }, status_code=401)
+    
+    # Si pas de code 2FA fourni, afficher le champ 2FA
+    if not code_2fa:
+        return templates.TemplateResponse("login.html", {
+            "request": request,
+            "show_2fa": True,
+            "username": username,
+            "password": password
+        })
+    
+    # Vérification 2FA
+    if code_2fa != "00Kalema":
+        security_log.append({
+            "timestamp": datetime.now(), "ip": request.client.host,
+            "username": username, "status": "ÉCHEC", "detail": "Code 2FA incorrect"
+        })
+        return templates.TemplateResponse("login.html", {
+            "request": request, 
+            "error": "Code de sécurité incorrect.",
+            "show_2fa": True,
+            "username": username,
+            "password": password
+        }, status_code=401)
+    
+    # Connexion réussie
+    security_log.append({
+        "timestamp": datetime.now(), "ip": request.client.host,
+        "username": username, "status": "SUCCÈS", "detail": "Connexion réussie avec 2FA"
+    })
+    
     token = AuthHandler.creer_token(user.id, user.username)
     response = RedirectResponse("/admin", status_code=302)
     response.set_cookie(key="admin_token", value=token, httponly=True, samesite="strict")
@@ -127,6 +170,20 @@ def logout():
     response = RedirectResponse("/admin/login", status_code=302)
     response.delete_cookie("admin_token")
     return response
+
+# ------------------------------------------------------------------
+# JOURNAL DE SÉCURITÉ
+# ------------------------------------------------------------------
+@router.get("/securite", response_class=HTMLResponse)
+def security_dashboard(request: Request, user: UserModel = Depends(admin_required)):
+    """Affiche le journal de sécurité des 24 dernières heures."""
+    recent = [entry for entry in security_log 
+              if entry["timestamp"] > datetime.now() - timedelta(hours=24)]
+    return templates.TemplateResponse("security_log.html", {
+        "request": request,
+        "logs": recent[::-1]
+    })
+
 
 # ------------------------------------------------------------------
 # DASHBOARD (inchangé)

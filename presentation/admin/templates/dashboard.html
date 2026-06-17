@@ -175,6 +175,29 @@
             </div>
         </div>
 
+        <!-- Widget nouveaux messages -->
+<div class="card mb-8 bg-netflix-accent/5 border border-netflix-accent/20">
+    <div class="flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-netflix-accent/20 rounded-full flex items-center justify-center">
+                <i class="fas fa-envelope text-2xl text-netflix-accent"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-white text-lg">Nouveaux messages</h3>
+                {% if nb_nouveaux_contacts > 0 %}
+                <p class="text-netflix-accent text-3xl font-bold">{{ nb_nouveaux_contacts }}</p>
+                <p class="text-netflix-muted text-sm">message(s) non lu(s)</p>
+                {% else %}
+                <p class="text-netflix-muted text-lg mt-1">Aucun nouveau message</p>
+                {% endif %}
+            </div>
+        </div>
+        <a href="/admin/contacts" class="bg-netflix-accent text-white px-5 py-2.5 rounded-xl text-sm hover:bg-red-700 transition flex items-center gap-2">
+            <i class="fas fa-arrow-right"></i> Voir
+        </a>
+    </div>
+</div>
+
         <!-- GRAPHIQUES ENRICHIS -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <!-- Visites par pays -->
@@ -303,10 +326,12 @@
         <a href="/admin/about" class="fab-item"><i class="fas fa-info-circle"></i> À propos</a>
         <a href="/admin/liens" class="fab-item"><i class="fas fa-link"></i> Liens</a>
         <a href="/admin/contacts" class="fab-item"><i class="fas fa-envelope"></i> Messages</a>
+        <a href="/admin/blog" class="fab-item"><i class="fas fa-blog"></i> Blogs</a>
         <div class="fab-divider"></div>
         <a href="/admin/visites" class="fab-item"><i class="fas fa-chart-line"></i> Visites</a>
         <a href="/admin/heatmap" class="fab-item"><i class="fas fa-fire"></i> Heatmap</a>
         <a href="/admin/sante" class="fab-item"><i class="fas fa-heartbeat"></i> Santé</a>
+        <a href="/admin/security" class="fab-item"><i class="fas fa-shield-alt"></i> Sécurité</a>
         <a href="/admin/snapshots" class="fab-item"><i class="fas fa-save"></i> Sauvegardes</a>
         <a href="/admin/media" class="fab-item"><i class="fas fa-image"></i> Médias</a>
         <a href="/admin/maintenance" class="fab-item"><i class="fas fa-tools"></i> Maintenance</a>
