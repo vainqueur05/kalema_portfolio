@@ -174,7 +174,7 @@ def logout():
 # ------------------------------------------------------------------
 # JOURNAL DE SÉCURITÉ
 # ------------------------------------------------------------------
-@router.get("/securite", response_class=HTMLResponse)
+@router.get("/security", response_class=HTMLResponse)
 def security_dashboard(request: Request, user: UserModel = Depends(admin_required)):
     """Affiche le journal de sécurité des 24 dernières heures."""
     recent = [entry for entry in security_log 
