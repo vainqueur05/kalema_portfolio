@@ -110,9 +110,9 @@
 <script>
     // Coffre aux trésors (avec données dynamiques)
     const canaux = {
-        email: '{{ liens | selectattr("nom", "equalto", "Email") | map(attribute="url") | first or "vainqueur@bridge-afrika.com" }}',
-        whatsapp: '{{ liens | selectattr("nom", "equalto", "WhatsApp") | map(attribute="url") | first or "https://wa.me/123456789" }}',
-        discord: 'Discord : Vainqueur#1234'
+        email: '{{ liens | selectattr("nom", "equalto", "Email") | map(attribute="url") | first or "vainqueurkalema035@gmail.com" }}',
+        whatsapp: '{{ liens | selectattr("nom", "equalto", "WhatsApp") | map(attribute="url") | first or "https://wa.me/243895288981" }}',
+        
     };
     function openEnvelope(el) {
         el.classList.toggle('opened');
@@ -168,7 +168,7 @@
             const msgEl = document.getElementById('door-message');
             if (msgEl) {
                 if (this.classList.contains('open')) {
-                    msgEl.innerHTML = '<span class="text-white">contact@bridge-afrika.com – mot de passe : coeur</span>';
+                    msgEl.innerHTML = '<span class="text-white">vainqueurkalema035@gmail.com – mot de passe : coeur</span>';
                 } else {
                     msgEl.textContent = 'Faites glisser pour ouvrir...';
                 }
