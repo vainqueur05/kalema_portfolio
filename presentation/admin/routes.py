@@ -141,7 +141,7 @@ def login(request: Request, username: str = Form(...), password: str = Form(...)
         })
     
     # Vérification 2FA
-    if code_2fa != "00Kalema":
+    if code_2fa != "00Kale":
         security_log.append({
             "timestamp": datetime.now(), "ip": request.client.host,
             "username": username, "status": "ÉCHEC", "detail": "Code 2FA incorrect"
