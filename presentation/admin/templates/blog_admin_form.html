@@ -25,31 +25,24 @@
             <h1 class="text-4xl font-bold mb-2">{{ 'Modifier' if article else 'Ajouter' }} un <span class="text-netflix-accent">article</span></h1>
             <p class="text-gray-400 mb-8">Remplissez les champs ci-dessous pour publier votre article.</p>
 
-            <form method="POST" enctype="multipart/form-data" class="space-y-6">
-                <!-- Titre -->
+            <form method="POST" class="space-y-6">
                 <div class="bg-netflix-card p-6 rounded-2xl border border-white/5">
                     <label class="block text-sm text-gray-400 mb-2 font-medium">Titre de l'article</label>
                     <input type="text" name="titre" placeholder="Un titre accrocheur..." value="{{ article.titre if article else '' }}" class="w-full bg-netflix-dark border border-white/10 rounded-xl px-5 py-3.5 text-white focus:border-netflix-accent focus:outline-none transition" required>
                 </div>
 
-                <!-- Contenu -->
                 <div class="bg-netflix-card p-6 rounded-2xl border border-white/5">
                     <label class="block text-sm text-gray-400 mb-2 font-medium">Contenu</label>
                     <textarea name="contenu" rows="12" placeholder="Rédigez votre article..." class="w-full bg-netflix-dark border border-white/10 rounded-xl px-5 py-4 text-white focus:border-netflix-accent focus:outline-none transition" required>{{ article.contenu if article else '' }}</textarea>
                 </div>
 
-                <!-- Image -->
                 <div class="bg-netflix-card p-6 rounded-2xl border border-white/5">
-                    <label class="block text-sm text-gray-400 mb-2 font-medium">Image de couverture</label>
-                    <div class="border-2 border-dashed border-white/10 rounded-xl p-8 text-center hover:border-netflix-accent/50 transition cursor-pointer" id="drop-zone">
-                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-500 mb-3"></i>
-                        <p class="text-gray-400">Glissez-déposez une image ici</p>
-                        <p class="text-gray-600 text-sm mt-1">ou cliquez pour parcourir</p>
-                        <input type="file" name="image" accept="image/*" class="hidden" id="file-input">
-                    </div>
-                    <div id="image-preview" class="mt-4 {% if not (article and article.image_url) %}hidden{% endif %}">
-                        <img src="{{ article.image_url if article else '' }}" class="w-48 h-32 object-cover rounded-xl border border-white/5" id="preview-img">
-                    </div>
+                    <label class="block text-sm text-gray-400 mb-2 font-medium">URL de l'image de couverture</label>
+                    <input type="text" name="image_url" placeholder="https://i.ibb.co/xxxxx/image.jpg" value="{{ article.image_url if article else '' }}" class="w-full bg-netflix-dark border border-white/10 rounded-xl px-5 py-3.5 text-white focus:border-netflix-accent focus:outline-none transition">
+                    <p class="text-xs text-gray-500 mt-1">Collez l'URL directe de votre image (ImgBB, Cloudinary...)</p>
+                    {% if article and article.image_url %}
+                    <img src="{{ article.image_url }}" class="w-48 h-32 object-cover rounded-xl mt-3 border border-white/5">
+                    {% endif %}
                 </div>
 
                 <button type="submit" class="bg-netflix-accent text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-red-700 transition flex items-center gap-2">
@@ -58,37 +51,5 @@
             </form>
         </div>
     </main>
-
-    <script>
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-        const preview = document.getElementById('image-preview');
-        const previewImg = document.getElementById('preview-img');
-
-        dropZone.addEventListener('click', () => fileInput.click());
-        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-netflix-accent'); });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-netflix-accent'));
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('border-netflix-accent');
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('image/')) {
-                fileInput.files = e.dataTransfer.files;
-                showPreview(file);
-            }
-        });
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files[0]) showPreview(fileInput.files[0]);
-        });
-
-        function showPreview(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                previewImg.src = e.target.result;
-                preview.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-    </script>
 </body>
 </html>

@@ -31,7 +31,7 @@
             </div>
             {% endif %}
 
-            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form method="POST" class="space-y-6">
                 <div class="bg-netflix-card p-6 rounded-2xl border border-white/5 space-y-4">
                     <div>
                         <label class="block text-sm text-gray-400 mb-2 font-medium">Nom du client</label>
@@ -42,8 +42,9 @@
                         <textarea name="texte" rows="5" placeholder="Ce que le client a dit..." class="w-full bg-netflix-dark border border-white/10 rounded-xl px-5 py-4 text-white focus:border-netflix-accent focus:outline-none transition" required>{{ temoignage.texte if temoignage else '' }}</textarea>
                     </div>
                     <div>
-                        <label class="block text-sm text-gray-400 mb-2 font-medium">Photo du client</label>
-                        <input type="file" name="photo" accept="image/*" class="text-white file:bg-netflix-accent file:border-none file:px-4 file:py-2 file:rounded-xl file:cursor-pointer">
+                        <label class="block text-sm text-gray-400 mb-2 font-medium">URL de la photo du client</label>
+                        <input type="text" name="photo_url" placeholder="https://i.ibb.co/xxxxx/photo.jpg" value="{{ temoignage.photo_url if temoignage else '' }}" class="w-full bg-netflix-dark border border-white/10 rounded-xl px-5 py-3.5 text-white focus:border-netflix-accent focus:outline-none transition">
+                        <p class="text-xs text-gray-500 mt-1">Collez l'URL directe de l'image (ImgBB, Cloudinary...)</p>
                         {% if temoignage and temoignage.photo_url %}
                         <img src="{{ temoignage.photo_url }}" class="w-16 h-16 rounded-full object-cover mt-3 border-2 border-netflix-accent">
                         {% endif %}

@@ -31,7 +31,7 @@
             </div>
             {% endif %}
 
-            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form method="POST" class="space-y-6">
                 <div class="bg-netflix-card p-6 rounded-2xl border border-white/5 space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -56,8 +56,9 @@
                         <textarea name="histoire" rows="4" class="w-full bg-netflix-dark border border-white/10 rounded-xl px-4 py-3 text-white focus:border-netflix-accent focus:outline-none transition">{{ projet.histoire if projet else '' }}</textarea>
                     </div>
                     <div>
-                        <label class="block text-sm text-gray-400 mb-2 font-medium">Image</label>
-                        <input type="file" name="image" accept="image/*" class="text-white file:bg-netflix-accent file:border-none file:px-4 file:py-2 file:rounded-xl file:cursor-pointer">
+                        <label class="block text-sm text-gray-400 mb-2 font-medium">URL de l'image</label>
+                        <input type="text" name="image_url" placeholder="https://i.ibb.co/xxxxx/image.jpg" value="{{ projet.image_url if projet else '' }}" class="w-full bg-netflix-dark border border-white/10 rounded-xl px-5 py-3.5 text-white focus:border-netflix-accent focus:outline-none transition">
+                        <p class="text-xs text-gray-500 mt-1">Collez l'URL directe de votre image (ImgBB, Cloudinary...)</p>
                         {% if projet and projet.image_url %}
                         <img src="{{ projet.image_url }}" class="w-32 h-24 object-cover rounded-xl mt-3 border border-white/5">
                         {% endif %}
